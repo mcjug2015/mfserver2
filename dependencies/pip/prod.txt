@@ -1,0 +1,2 @@
+fabric
+Django==1.10
