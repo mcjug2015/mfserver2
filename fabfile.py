@@ -35,6 +35,9 @@ def sudo_docker_provision():
     local("""sudo docker build --rm -t local/c7-mfserver2 provisioning/docker/c7-mfserver2""")
     container_id = local("""sudo docker run --privileged -d -t -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 8000:80 -p 4443:443 local/c7-mfserver2""", capture=True)
     local("""sudo docker cp dist/mfserver2.tar.gz %s:/root""" % container_id)
+    local("""sudo docker exec %s mkdir -p /tmp/mfserver2""" % container_id)
+    local("""sudo docker exec %s tar -xzf /root/mfserver2.tar.gz -C /tmp/mfserver2""" % container_id)
+    local("""sudo docker exec %s sh /tmp/mfserver2/provisioning/misc/do_salt.sh""" % container_id)
     #sudo_docker_stop_remove()
 
 
@@ -42,4 +45,4 @@ def sudo_docker_stop_remove():
     with warn_only():
         local("""sudo docker stop $(sudo docker ps -a -q)""")
         local("""sudo docker rm $(sudo docker ps -a -q)""")
-        local("""sudo docker rmi $(sudo docker images -q)""")
+        # local("""sudo docker rmi -f $(sudo docker images -q)""")
