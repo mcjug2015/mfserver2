@@ -12,6 +12,9 @@ yum-packages:
       - gcc
       - libcap-devel
       - net-tools
+      - policycoreutils
+      - uwsgi
+      - uwsgi-plugin-python
 
 
 py-packages:
