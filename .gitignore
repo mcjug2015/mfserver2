@@ -1,2 +1,3 @@
 /dist/
 *.pyc
+/db.sqlite3
