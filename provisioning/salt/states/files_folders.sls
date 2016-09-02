@@ -20,6 +20,17 @@ log_folder:
       - user: regular_user
 
 
+socket_folder:
+  file.directory:
+    - name: {{pillar['sock_folder']}}
+    - user: {{pillar['regular_username']}}
+    - group: {{pillar['regular_username']}}
+    - mode: 755
+    - makedirs: True
+    - require:
+      - user: regular_user
+
+
 source_folder:
   file.recurse:
     - name: {{pillar['code_folder']}}

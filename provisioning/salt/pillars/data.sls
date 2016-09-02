@@ -10,3 +10,4 @@ root_folder: /opt/mfserver2
 code_folder: /opt/mfserver2/code
 venv_folder: /opt/mfserver2/venv
 log_folder: /var/log/mfserver2
+sock_folder: /var/run/mfserver2
