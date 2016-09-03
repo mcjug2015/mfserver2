@@ -17,3 +17,13 @@ mfserver2:
         bash -c "source {{pillar['venv_folder']}}/bin/activate; fab install_dev_deps;"
     - require:
       - virtualenv: venv
+
+
+mfserver2_sudo:
+  cmd.run:
+    - cwd: {{pillar['code_folder']}}
+    - runas: {{pillar['sudo_username']}}
+    - name:
+        bash -t -c "source {{pillar['venv_folder']}}/bin/activate; fab sudo_refresh_local;"
+    - require:
+      - cmd: mfserver2

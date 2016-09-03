@@ -46,3 +46,39 @@ def sudo_docker_stop_remove():
         local("""sudo docker stop $(sudo docker ps -a -q)""")
         local("""sudo docker rm $(sudo docker ps -a -q)""")
         # local("""sudo docker rmi -f $(sudo docker images -q)""")
+
+
+def sudo_refresh_local():
+    sudo_update_ngnix_confs()
+    sudo_copy_uwsgi_ini()
+    sudo_put_root_uwsgi_ini()
+    sudo_put_uwsgi_systemd_file()
+    sudo_reboot_all()
+
+
+def sudo_update_ngnix_confs():
+    local('sudo cp conf/nginx/nginx.conf /etc/nginx/')
+    local('sudo cp conf/nginx/mfserver2.conf /etc/nginx/conf.d/')
+
+
+def sudo_copy_uwsgi_ini():
+    local('sudo cp conf/uwsgi/uwsgi.ini /etc/uwsgi.d/' % env)
+    local('sudo chown reg_user:reg_user /etc/uwsgi.d/uwsgi.ini' % env)
+
+
+def sudo_put_root_uwsgi_ini():
+    local("sudo cp conf/uwsgi/root_uwsgi.ini /etc/uwsgi.ini")
+
+
+def sudo_put_uwsgi_systemd_file():
+    local("sudo cp conf/uwsgi/uwsgi.service /usr/lib/systemd/system/uwsgi.service")
+    local("sudo systemctl enable uwsgi")
+    local("sudo systemctl daemon-reload")
+
+
+def sudo_reboot_all():
+    with warn_only():
+        local('sudo systemctl stop nginx')
+        local('sudo systemctl stop uwsgi')
+    local('sudo systemctl start uwsgi')
+    local('sudo systemctl start nginx')
