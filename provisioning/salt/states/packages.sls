@@ -1,3 +1,11 @@
+postgres-repo:
+   pkgrepo.managed:
+     - name: postgres-centos
+     - humanname: postgres-centos
+     - baseurl: {{pillar['pg_repo']}}
+     - gpgcheck: 0
+
+
 yum-packages:
   pkg.installed:
     - pkgs:
@@ -15,6 +23,11 @@ yum-packages:
       - policycoreutils: 2.2.5-20.el7
       - uwsgi: 2.0.13.1-2.el7
       - uwsgi-plugin-python: 2.0.13.1-2.el7
+      - {{pillar['pg_server_name']}}: {{pillar['pg_server_version']}}
+      - {{pillar['pg_devel_name']}}: {{pillar['pg_devel_version']}}
+      - {{pillar['postgis_name']}}: {{pillar['postgis_version']}}
+    - require:
+      - pkgrepo: postgres-repo
 
 
 py-packages:
@@ -24,4 +37,3 @@ py-packages:
       - virtualenv==15.0.3
     - require:
       - pkg: yum-packages
-

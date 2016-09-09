@@ -21,3 +21,10 @@ do_cert:
     - O: "MCJUG"
     - cacert_path: "/etc/nginx"
     - tls_dir: "ssl"
+
+
+init_postgres:
+  cmd.run:
+    - name: {{pillar['pg_setup_path']}} initdb
+    - require:
+      - pkg: yum-packages
