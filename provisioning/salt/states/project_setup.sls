@@ -23,7 +23,8 @@ mfserver2_sudo:
   cmd.run:
     - cwd: {{pillar['code_folder']}}
     - runas: {{pillar['sudo_username']}}
+    - user: {{pillar['sudo_username']}}
     - name:
-        bash -t -c "source {{pillar['venv_folder']}}/bin/activate; fab sudo_refresh_local;"
+        bash -t -c "/bin/whoami;source {{pillar['venv_folder']}}/bin/activate; fab sudo_refresh_local;"
     - require:
       - cmd: mfserver2
