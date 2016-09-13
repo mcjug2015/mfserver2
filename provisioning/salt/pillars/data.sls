@@ -25,3 +25,5 @@ pg_devel_version: 9.4.9-1PGDG.rhel7
 postgis_name: postgis2_94
 postgis_version: 2.1.8-1.rhel7
 pg_setup_path: /usr/pgsql-9.4/bin/postgresql94-setup
+pg_conf_path: /var/lib/pgsql/9.4/data/postgresql.conf
+pg_hba_path: /var/lib/pgsql/9.4/data/pg_hba.conf
