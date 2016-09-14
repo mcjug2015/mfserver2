@@ -26,5 +26,6 @@ do_cert:
 init_postgres:
   cmd.run:
     - name: {{pillar['pg_setup_path']}} initdb
+    - unless: ls {{pillar['pg_conf_path']}}
     - require:
       - pkg: yum-packages

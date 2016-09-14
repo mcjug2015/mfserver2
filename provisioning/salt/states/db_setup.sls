@@ -18,4 +18,28 @@ pg_conf:
     - source:
       - salt://mfserver2_copy/conf/psql/pg_hba.conf
     - require:
-      - cmd: init_postgres
+      - file: pg_conf
+
+
+{{pillar['pg_server_unit_name']}}:
+  service.running:
+    - enable: True
+    - require:
+      - file: {{pillar['pg_hba_path']}}
+
+
+mfserver2_db_user:
+  postgres_user.present:
+    - name: {{pillar['db_name']}}
+    - password: {{pillar['db_name']}}
+    - user: postgres
+    - require:
+      - service: {{pillar['pg_server_unit_name']}}
+
+
+mfserver2_db:
+  postgres_database.present:
+    - name: {{pillar['db_name']}}
+    - user: postgres
+    - require:
+      - postgres_user: mfserver2_db_user
