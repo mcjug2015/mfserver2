@@ -24,6 +24,8 @@ def install_dev_deps():
 def refresh_local():
     _ensure_virtualenv()
     install_prod_deps()
+    install_dev_deps()
+    local("""python manage.py migrate""")
 
 
 def sudo_docker_provision():

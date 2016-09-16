@@ -12,11 +12,10 @@ mfserver2:
   cmd.run:
     - cwd: {{pillar['code_folder']}}
     - runas: {{pillar['regular_username']}}
-    - name: |
-        bash -c "source {{pillar['venv_folder']}}/bin/activate; fab install_prod_deps;"
-        bash -c "source {{pillar['venv_folder']}}/bin/activate; fab install_dev_deps;"
+    - name: bash -c "PATH=$PATH:/usr/pgsql-9.4/bin/;source {{pillar['venv_folder']}}/bin/activate; fab refresh_local;"
     - require:
       - virtualenv: venv
+      - cmd: postgis_extension
 
 
 mfserver2_sudo:

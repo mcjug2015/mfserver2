@@ -43,3 +43,12 @@ mfserver2_db:
     - user: postgres
     - require:
       - postgres_user: mfserver2_db_user
+
+
+postgis_extension:
+  cmd.run:
+    - name: /usr/bin/psql {{pillar['db_name']}} -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;"
+    - runas: postgres
+    - user: postgres
+    - require:
+      - postgres_database: mfserver2_db
