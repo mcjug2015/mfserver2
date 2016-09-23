@@ -46,7 +46,7 @@ class Meeting(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     geo_location = models.PointField()
-    types = models.ManyToManyField(MeetingType, related_name='meetings')
+    types = models.ManyToManyField(MeetingType, related_name='meetings', blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
