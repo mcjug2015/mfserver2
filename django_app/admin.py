@@ -62,8 +62,10 @@ class MeetingTypeAdmin(admin.GeoModelAdmin):
 
 class MapMeetingAdmin(admin.GeoModelAdmin):
     ''' admin for meetings that shows a map '''
-    list_display = ('name', 'description', 'address', 'day_of_week', 'start_time', 'end_time', 'creator', 'created_date', 'updated_date')
-    list_filter = ('name', 'description', 'address', 'day_of_week', 'start_time', 'end_time', 'creator', 'created_date', 'updated_date')
+    list_display = ('name', 'description', 'address', 'day_of_week', 'start_time',
+                    'end_time', 'creator', 'created_date', 'updated_date')
+    list_filter = ('name', 'description', 'address', 'day_of_week', 'start_time',
+                   'end_time', 'creator', 'created_date', 'updated_date')
     search_fields = ('name', 'description', 'address', 'creator__username')
 
 

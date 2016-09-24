@@ -21,6 +21,19 @@ def install_dev_deps():
     local('pip install -q -r dependencies/pip/dev.txt')
 
 
+def pep8():
+    _ensure_virtualenv()
+    local('pep8 --config=conf_dev/pep8/pep8_config.txt django_app')
+    local('pep8 --config=conf_dev/pep8/pep8_config.txt django_proj')
+
+
+def precommit():
+    _ensure_virtualenv()
+    install_prod_deps()
+    install_dev_deps()
+    pep8()
+
+
 def update_static_files():
     local('rm -rf /opt/mfserver2/static/')
     local('mkdir -p /opt/mfserver2/static/')
@@ -28,12 +41,9 @@ def update_static_files():
     local('cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
 
 
-
-
 def refresh_local():
     _ensure_virtualenv()
     install_prod_deps()
-    install_dev_deps()
     local("""python manage.py migrate""")
     update_static_files()
 

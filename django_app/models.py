@@ -14,12 +14,12 @@ class CigarShop(models.Model):
         return self.name
 
 
-
 class MeetingType(models.Model):
     ''' the type of meeting '''
     short_name = models.CharField(null=False, blank=False, max_length=250)
     name = models.CharField(null=False, blank=False, max_length=250)
     description = models.CharField(null=False, blank=False, max_length=250)
+
     def __str__(self):
         return ("%s(%s)" % (self.name, self.short_name))
 
