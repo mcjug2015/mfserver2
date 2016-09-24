@@ -21,11 +21,21 @@ def install_dev_deps():
     local('pip install -q -r dependencies/pip/dev.txt')
 
 
+def update_static_files():
+    local('rm -rf /opt/mfserver2/static/')
+    local('mkdir -p /opt/mfserver2/static/')
+    local('cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/mfserver2/static/')
+    local('cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
+
+
+
+
 def refresh_local():
     _ensure_virtualenv()
     install_prod_deps()
     install_dev_deps()
     local("""python manage.py migrate""")
+    update_static_files()
 
 
 def sudo_docker_provision():
@@ -48,7 +58,7 @@ def sudo_docker_stop_remove():
     with warn_only():
         local("""sudo docker stop $(sudo docker ps -a -q)""")
         local("""sudo docker rm $(sudo docker ps -a -q)""")
-        # local("""sudo docker rmi -f $(sudo docker images -q)""")
+        local("""sudo docker rmi -f $(sudo docker images -q)""")
 
 
 def sudo_refresh_local():
