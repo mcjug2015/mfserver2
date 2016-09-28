@@ -1,3 +1,5 @@
+''' admin module '''
+# pylint: disable=too-few-public-methods
 from django.contrib.gis import admin
 from django import forms
 from django.core import validators

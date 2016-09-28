@@ -1,3 +1,5 @@
+''' views module '''
+# pylint: disable=no-self-use
 from django.shortcuts import render
 from django.views import View
 

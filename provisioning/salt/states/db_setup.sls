@@ -33,6 +33,7 @@ mfserver2_db_user:
     - name: {{pillar['db_name']}}
     - password: {{pillar['db_name']}}
     - user: postgres
+    - superuser: True
     - require:
       - service: {{pillar['pg_server_unit_name']}}
 

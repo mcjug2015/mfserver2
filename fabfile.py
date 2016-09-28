@@ -27,11 +27,24 @@ def pep8():
     local('pep8 --config=conf_dev/pep8/pep8_config.txt django_proj')
 
 
+def pylint():
+    _ensure_virtualenv()
+    local('pylint --rcfile=conf_dev/pylint/pylintrc.txt django_app')
+    local('pylint --rcfile=conf_dev/pylint/pylintrc.txt django_proj')
+
+
+def run_tests():
+    _ensure_virtualenv()
+    local('python manage.py test')
+
+
 def precommit():
     _ensure_virtualenv()
     install_prod_deps()
     install_dev_deps()
     pep8()
+    pylint()
+    run_tests()
 
 
 def update_static_files():

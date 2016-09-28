@@ -1,3 +1,5 @@
+''' models module '''
+# pylint: disable=no-member
 from __future__ import unicode_literals
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
@@ -21,7 +23,7 @@ class MeetingType(models.Model):
     description = models.CharField(null=False, blank=False, max_length=250)
 
     def __str__(self):
-        return ("%s(%s)" % (self.name, self.short_name))
+        return "%s(%s)" % (self.name, self.short_name)
 
 
 class Meeting(models.Model):

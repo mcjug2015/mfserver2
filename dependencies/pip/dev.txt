@@ -1,1 +1,7 @@
 pep8
+backports.functools-lru-cache
+configparser
+pylint
+nose
+django-nose
+coverage
