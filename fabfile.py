@@ -35,7 +35,10 @@ def pylint():
 
 def run_tests():
     _ensure_virtualenv()
-    local('python manage.py test')
+    local('coverage erase')
+    local('coverage run --branch manage.py test')
+    local('coverage html -d py_coverage --include=django_app/*')
+    local('coverage report -m --fail-under=66 --include=django_app/* --omit=django_app/migrations/*')
 
 
 def precommit():
