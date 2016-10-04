@@ -12,18 +12,12 @@ class CigarShop(models.Model):
     location = models.PointField()
     owner = models.ForeignKey(User, related_name='cigar_shops', null=False, blank=False)
 
-    def __str__(self):
-        return self.name
-
 
 class MeetingType(models.Model):
     ''' the type of meeting '''
     short_name = models.CharField(null=False, blank=False, max_length=250)
     name = models.CharField(null=False, blank=False, max_length=250)
     description = models.CharField(null=False, blank=False, max_length=250)
-
-    def __str__(self):
-        return "%s(%s)" % (self.name, self.short_name)
 
 
 class Meeting(models.Model):
@@ -50,9 +44,3 @@ class Meeting(models.Model):
     geo_location = models.PointField()
     types = models.ManyToManyField(MeetingType, related_name='meetings', blank=True)
     is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        meeting_str = 'Meeting id: %s, ' % str(self.pk)
-        if self.creator:
-            meeting_str += "Creator: %s" % str(self.creator.username)
-        return meeting_str
