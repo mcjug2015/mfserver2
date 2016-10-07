@@ -1,3 +1,4 @@
 fabric
 Django==1.10
 psycopg2==2.6.2
+django-tastypie
