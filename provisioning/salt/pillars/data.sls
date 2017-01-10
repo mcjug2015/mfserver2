@@ -22,10 +22,10 @@ db_name: mfserver2
 # postgis2_95 2.2.2-1.rhel7
 pg_repo: http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/
 pg_server_name: postgresql94-server
-pg_server_version: 9.4.9-1PGDG.rhel7
+pg_server_version: 9.4.10-1PGDG.rhel7
 pg_server_unit_name: postgresql-9.4
 pg_devel_name: postgresql94-devel
-pg_devel_version: 9.4.9-1PGDG.rhel7
+pg_devel_version: 9.4.10-1PGDG.rhel7
 postgis_name: postgis2_94
 postgis_version: 2.1.8-1.rhel7
 pg_setup_path: /usr/pgsql-9.4/bin/postgresql94-setup

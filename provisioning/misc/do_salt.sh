@@ -1,9 +1,9 @@
 #!/bin/bash
 
-/usr/bin/curl -o /tmp/epel-release.rpm http://mirror.sfo12.us.leaseweb.net/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
-/usr/bin/rpm -Uvh /tmp/epel-release.rpm
-/usr/bin/yum install -y /tmp/mfserver2/provisioning/rpms/systemd-python-219-19.el7_2.12.x86_64.rpm
+/usr/bin/yum install -y epel-release
 /usr/bin/yum install -y salt-minion
+/usr/bin/yum install -y python2-pip
+/usr/bin/pip install pip==7.1.0
 
 #let salt have access to all the projects files
 /usr/bin/rm -rf /tmp/mfserver2_copy/
