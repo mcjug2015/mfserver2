@@ -1,0 +1,35 @@
+[{
+    "model": "django_app.meeting", 
+    "pk": 1, 
+    "fields": {
+        "name": "awesome meeting", 
+        "geo_location": "SRID=4326;POINT (-77.0000000000000000 39.0000000000000000)",
+        "creator": 1,
+        "day_of_week": 1,
+        "start_time": "20:30+03:00",
+        "end_time": "21:30+03:00",
+        "description": "truly an awesome meeting",
+        "address": "fake address",
+        "created_date": "2011-09-01T13:20:30+03:00",
+        "updated_date": "2011-09-01T13:20:30+03:00",
+        "is_active": true
+    }
+},
+{
+    "model": "django_app.meeting", 
+    "pk": 2, 
+    "fields": {
+        "name": "another awesome meeting", 
+        "geo_location": "SRID=4326;POINT (-77.1000000000000000 39.1000000000000000)",
+        "creator": 1,
+        "day_of_week": 2,
+        "start_time": "20:30+03:00",
+        "end_time": "21:30+03:00",
+        "description": "another truly an awesome meeting",
+        "address": "fake address",
+        "created_date": "2011-09-01T13:20:30+03:00",
+        "updated_date": "2011-09-01T13:20:30+03:00",
+        "is_active": true
+    }
+}
+]

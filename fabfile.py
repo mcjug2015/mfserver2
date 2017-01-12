@@ -83,7 +83,8 @@ def sudo_docker_stop_remove():
     with warn_only():
         local("""sudo docker stop $(sudo docker ps -a -q)""")
         local("""sudo docker rm $(sudo docker ps -a -q)""")
-        local("""sudo docker rmi -f $(sudo docker images -q)""")
+        #local("""sudo docker rmi -f $(sudo docker images -q)""")
+        pass
 
 
 def sudo_refresh_local():
