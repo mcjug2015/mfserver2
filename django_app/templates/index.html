@@ -3,6 +3,7 @@
     <title>MFServer2</title>
 </head>
 <body>
+    {% csrf_token %}
     <div>Welcome to meeting finder server 2</div>
     <div>{{ request.META.HTTP_USER_AGENT }}</div>
 </body>
