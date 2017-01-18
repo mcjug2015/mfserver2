@@ -35,6 +35,7 @@ def pylint():
 
 def run_tests():
     _ensure_virtualenv()
+    local('rm -rf py_coverage')
     local('coverage erase')
     local('coverage run --branch manage.py test')
     local('coverage html -d py_coverage --include=django_app/*')
@@ -50,18 +51,17 @@ def precommit():
     run_tests()
 
 
-def update_static_files():
-    local('rm -rf /opt/mfserver2/static/')
-    local('mkdir -p /opt/mfserver2/static/')
-    local('cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/mfserver2/static/')
-    local('cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
+def sudo_update_static_files():
+    local('sudo rm -rf /opt/mfserver2/static/')
+    local('sudo mkdir -p /opt/mfserver2/static/')
+    local('sudo cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/mfserver2/static/')
+    local('sudo cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
 
 
 def refresh_local():
     _ensure_virtualenv()
     install_prod_deps()
     local("""python manage.py migrate""")
-    update_static_files()
 
 
 def sudo_docker_provision():
@@ -88,6 +88,7 @@ def sudo_docker_stop_remove():
 
 
 def sudo_refresh_local():
+    sudo_update_static_files()
     sudo_update_ngnix_confs()
     sudo_copy_uwsgi_ini()
     sudo_put_root_uwsgi_ini()

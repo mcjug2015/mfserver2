@@ -12,6 +12,7 @@ mfserver2_precommit:
   cmd.run:
     - cwd: {{pillar['code_folder']}}
     - runas: {{pillar['regular_username']}}
+    - user: {{pillar['regular_username']}}
     - name: bash -c "PATH=$PATH:/usr/pgsql-9.4/bin/;source {{pillar['venv_folder']}}/bin/activate; fab precommit;"
     - require:
       - virtualenv: venv
@@ -22,6 +23,7 @@ mfserver2:
   cmd.run:
     - cwd: {{pillar['code_folder']}}
     - runas: {{pillar['regular_username']}}
+    - user: {{pillar['regular_username']}}
     - name: bash -c "PATH=$PATH:/usr/pgsql-9.4/bin/;source {{pillar['venv_folder']}}/bin/activate; fab refresh_local;"
     - require:
       - cmd: mfserver2_precommit
