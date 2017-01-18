@@ -1,15 +1,16 @@
 # login stuff
-Read this document for how to manually make authenticated requests. There is also a helper command in django_app.management.commands.get_csrf_session.py that will take in your username and password and supply csrf token and session id
+Read this document for how to manually make authenticated requests. There is also a helper command in django_app.management.commands.get_csrf_session.py that will take in your username and password and supply csrf token and session id. E.G. 
+python manage.py get_csrf_session --initial_url https://127.0.0.1/mfserver2/welcome/ --login_url https://127.0.0.1/mfserver2/login_async/
 
 
 grab the csrf token value and cookie from
-curl -f -k -v http://127.0.0.1:8000/mfserver2/welcome/
+curl -f -k -v https://127.0.0.1/mfserver2/welcome/
 
-send in csrf token + cookie + login creds to get session id
-curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' http://127.0.0.1:8000/mfserver2/login_async/
+send in csrf referer + token + cookie + login creds to get session id
+curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' https://127.0.0.1/mfserver2/login_async/
 
-send in the latest csrf cookie and session id to make authenticated requests
-curl -f -k -v --cookie "csrftoken=THE_LATEST_CSRF" --cookie "sessionid=THE_SESSIONID" http://127.0.0.1:8000/mfserver2/api/v1/auth/user/1/?format=json
+send in the latest referer + csrf cookie + session id to make authenticated requests
+curl -f -k -v -H "referer: https://127.0.0.1" --cookie "csrftoken=bzmTnfiD0l64NsyAjvl7U2yidWSwRiIMYAqXtpJEYLI6CQQ9U6VPxC92BiyoWMa7" --cookie "sessionid=7c3zwkt8ggxm8a6ff8i87i3wlxr6cxyp" https://127.0.0.1/mfserver2/api/v1/auth/user/?format=json
 
 
 ## login stuff details
