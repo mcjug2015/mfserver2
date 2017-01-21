@@ -4,13 +4,19 @@ python manage.py get_csrf_session --initial_url https://127.0.0.1/mfserver2/welc
 
 
 grab the csrf token value and cookie from
+
 curl -f -k -v https://127.0.0.1/mfserver2/welcome/
 
+
 send in csrf referer + token + cookie + login creds to get session id
+
 curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' https://127.0.0.1/mfserver2/login_async/
 
+
 send in the latest referer + csrf cookie + session id to make authenticated requests
+
 curl -f -k -v -H "referer: https://127.0.0.1" --cookie "csrftoken=bzmTnfiD0l64NsyAjvl7U2yidWSwRiIMYAqXtpJEYLI6CQQ9U6VPxC92BiyoWMa7" --cookie "sessionid=7c3zwkt8ggxm8a6ff8i87i3wlxr6cxyp" https://127.0.0.1/mfserver2/api/v1/auth/user/?format=json
+
 
 
 ## login stuff details

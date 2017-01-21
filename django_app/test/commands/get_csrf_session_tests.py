@@ -34,8 +34,9 @@ class CommandTests(TestCase):
                                      password='b',
                                      initial_url='https://example.com:8000',
                                      login_url='d')
-        self.assertEquals('curl -f -k -v --cookie "csrftoken=cookie2" --cookie "sessionid=session_cookie1"',
-                          retval)
+        expected = 'curl -f -k -v --cookie "csrftoken=token1;sessionid=session_cookie1"'
+        expected += ' -H "X-CSRFToken: token1" -H "referer: https://example.com:8000"'
+        self.assertEquals(expected, retval)
 
     def test_add_arguments(self):
         ''' make sure add arguments method adds 4 arguments '''
