@@ -1,13 +1,18 @@
 ''' module for tastypie endpoints '''
-# pylint: disable=too-few-public-methods, no-member
+# pylint: disable=too-few-public-methods, no-member, misplaced-bare-raise
+import logging
 from tastypie import fields
 from tastypie.contrib.gis.resources import ModelResource
 from tastypie.constants import ALL
 from tastypie.authentication import SessionAuthentication
+from tastypie.exceptions import NotFound
+from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import Http404, HttpResponseNotFound
 from django.contrib.auth.models import User
 from django_app.models import MeetingType, Meeting
 from django_app.auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
+LOGGER = logging.getLogger(__name__)
 
 
 class UserResource(ModelResource):
@@ -49,6 +54,16 @@ class SaveMeetingResource(ModelResource):
     ''' meeting endpoint for saving meetings '''
     creator = fields.ToOneField(UserResource, 'creator')
     types = fields.ToManyField(MeetingTypeResource, 'types')
+
+    def _handle_500(self, request, exception):
+        ''' stop swollowing legitimate exceptions '''
+        not_found_exceptions = (NotFound, ObjectDoesNotExist, Http404)
+        if isinstance(exception, not_found_exceptions):
+            return HttpResponseNotFound()
+        else:
+            LOGGER.error('Something went wrong in tastypie, details below')
+            LOGGER.exception(exception)
+            raise
 
     class Meta(object):
         ''' meta info '''

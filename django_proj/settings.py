@@ -120,6 +120,63 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'django_log': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/var/log/mfserver2/django.log',
+        },
+        'django_db_log': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/var/log/mfserver2/django_db.log',
+        },
+        'django_request_log': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/var/log/mfserver2/django_request.log',
+        },
+        'mfserver2_log': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 25 * 1024 * 1024,
+            'backupCount': 5,
+            'filename': '/var/log/mfserver2/mfserver2.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.db': {
+            'handlers': ['django_db_log'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['django_request_log'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django_app': {
+            'handlers': ['mfserver2_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
