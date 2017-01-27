@@ -1,11 +1,12 @@
 ''' tests for the auth module '''
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User
+from mockito.mockito import unstub
+from mockito.mocking import mock
+from tastypie.exceptions import Unauthorized
 from django_app.auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
 from django_app.models import Meeting
-from mockito.mockito import unstub, mock
-from tastypie.exceptions import Unauthorized
 
 
 class UserObjectsAuthorizationTests(TestCase):

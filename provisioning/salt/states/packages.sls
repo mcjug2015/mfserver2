@@ -22,6 +22,10 @@ yum-packages:
       - policycoreutils: 2.5-9.el7
       - uwsgi: 2.0.14-3.el7
       - uwsgi-plugin-python: 2.0.14-3.el7
+      - liberation-mono-fonts
+      - liberation-narrow-fonts
+      - liberation-sans-fonts
+      - liberation-serif-fonts
       - {{pillar['pg_server_name']}}: {{pillar['pg_server_version']}}
       - {{pillar['pg_devel_name']}}: {{pillar['pg_devel_version']}}
       - {{pillar['postgis_name']}}: {{pillar['postgis_version']}}
@@ -32,6 +36,7 @@ yum-packages:
 py-packages:
   pip.installed:
     - pkgs:
+      - six==1.10.0
       - pyOpenSSL==16.0.0
       - virtualenv==15.0.3
     - require:

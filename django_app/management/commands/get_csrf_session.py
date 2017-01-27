@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--username', default='admin')
         parser.add_argument('--password', default='admin')
-        parser.add_argument('--initial_url', default='http://localhost:8000/mfserver2/welcome/')
+        parser.add_argument('--initial_url', default='http://127.0.0.1:8000/mfserver2/welcome/')
         parser.add_argument('--login_url', default='http://127.0.0.1:8000/mfserver2/login_async/')
 
     def handle(self, *args, **options):
@@ -37,4 +37,5 @@ class Command(BaseCommand):
                                                                          session_id)
         retval += ' -H "X-CSRFToken: %s" -H "referer: %s"' % (the_token1,
                                                               the_referer)
+        cookies = dict(csrftoken=the_token1, sessionid=session_id)
         return retval
