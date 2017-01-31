@@ -15,7 +15,21 @@ from django_app.auth import UserObjectsAuthorization,\
 LOGGER = logging.getLogger(__name__)
 
 
-class UserResource(ModelResource):
+class ExceptionThrowingModelResource(ModelResource):
+    ''' resource that does not eat exceptions '''
+
+    def _handle_500(self, request, exception):
+        ''' stop swollowing legitimate exceptions '''
+        not_found_exceptions = (NotFound, ObjectDoesNotExist, Http404)
+        if isinstance(exception, not_found_exceptions):
+            return HttpResponseNotFound()
+        else:
+            LOGGER.error('Something went wrong in tastypie, details below')
+            LOGGER.exception(exception)
+            raise exception
+
+
+class UserResource(ExceptionThrowingModelResource):
     ''' Use this to get info about the currently logged in user. '''
 
     class Meta(object):
@@ -30,7 +44,7 @@ class UserResource(ModelResource):
         filtering = {'username': ALL}
 
 
-class MeetingTypeResource(ModelResource):
+class MeetingTypeResource(ExceptionThrowingModelResource):
     ''' get only meeting type endpoint '''
 
     class Meta(object):
@@ -39,7 +53,7 @@ class MeetingTypeResource(ModelResource):
         allowed_methods = ['get']
 
 
-class MeetingResource(ModelResource):
+class MeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint '''
     creator = fields.ToOneField(UserResource, 'creator')
     types = fields.ToManyField(MeetingTypeResource, 'types')
@@ -50,20 +64,10 @@ class MeetingResource(ModelResource):
         allowed_methods = ['get']
 
 
-class SaveMeetingResource(ModelResource):
+class SaveMeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint for saving meetings '''
     creator = fields.ToOneField(UserResource, 'creator')
     types = fields.ToManyField(MeetingTypeResource, 'types')
-
-    def _handle_500(self, request, exception):
-        ''' stop swollowing legitimate exceptions '''
-        not_found_exceptions = (NotFound, ObjectDoesNotExist, Http404)
-        if isinstance(exception, not_found_exceptions):
-            return HttpResponseNotFound()
-        else:
-            LOGGER.error('Something went wrong in tastypie, details below')
-            LOGGER.exception(exception)
-            raise
 
     class Meta(object):
         ''' meta info '''

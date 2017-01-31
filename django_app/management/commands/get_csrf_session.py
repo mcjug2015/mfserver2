@@ -37,5 +37,4 @@ class Command(BaseCommand):
                                                                          session_id)
         retval += ' -H "X-CSRFToken: %s" -H "referer: %s"' % (the_token1,
                                                               the_referer)
-        cookies = dict(csrftoken=the_token1, sessionid=session_id)
         return retval

@@ -20,8 +20,8 @@ yum-packages:
       - libcap-devel: 2.22-8.el7
       - net-tools: 2.0-0.17.20131004git.el7
       - policycoreutils: 2.5-9.el7
-      - uwsgi: 2.0.14-3.el7
-      - uwsgi-plugin-python: 2.0.14-3.el7
+      - uwsgi
+      - uwsgi-plugin-python
       - liberation-mono-fonts
       - liberation-narrow-fonts
       - liberation-sans-fonts

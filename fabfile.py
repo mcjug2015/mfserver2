@@ -39,7 +39,7 @@ def run_tests():
     local('coverage erase')
     local('coverage run --branch manage.py test')
     local('coverage html -d py_coverage --include=django_app/*')
-    local('coverage report -m --fail-under=95 --include=django_app/* --omit=django_app/migrations/*')
+    local('coverage report -m --fail-under=100 --include=django_app/* --omit=django_app/migrations/*')
 
 
 def precommit():
