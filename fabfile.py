@@ -37,9 +37,14 @@ def run_tests():
     _ensure_virtualenv()
     local('rm -rf py_coverage')
     local('coverage erase')
-    local('coverage run --branch manage.py test')
+    local('coverage run --branch --omit=django_app/test/py_integration/* manage.py test')
     local('coverage html -d py_coverage --include=django_app/*')
     local('coverage report -m --fail-under=100 --include=django_app/* --omit=django_app/migrations/*')
+
+
+def run_py_integration_tests():
+    _ensure_virtualenv()
+    local("python manage.py test django_app.test.py_integration")
 
 
 def precommit():
@@ -49,6 +54,7 @@ def precommit():
     pep8()
     pylint()
     run_tests()
+    run_py_integration_tests()
 
 
 def sudo_update_static_files():
