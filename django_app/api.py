@@ -6,6 +6,7 @@ from tastypie.contrib.gis.resources import ModelResource
 from tastypie.constants import ALL
 from tastypie.authentication import SessionAuthentication
 from tastypie.exceptions import NotFound
+from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404, HttpResponseNotFound
 from django.contrib.auth.models import User
@@ -68,6 +69,21 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint for saving meetings '''
     creator = fields.ToOneField(UserResource, 'creator')
     types = fields.ToManyField(MeetingTypeResource, 'types')
+
+    def save(self, bundle, skip_errors=False):
+        '''
+            custom save method.
+            if this is not done saving causes
+            GDALException: Invalid geometry pointer returned from "OGR_G_CreateGeometryFromJson".
+            when run in nginx/uwsgi, but not in runserver. no idea why.
+            -1.5 weeks of life to figure this out.
+        '''
+        point_str = 'POINT(%s %s)' % (bundle.data['geo_location']['coordinates'][0],
+                                      bundle.data['geo_location']['coordinates'][1])
+        bundle.obj.geo_location = GEOSGeometry(point_str, srid=4326)
+        LOGGER.debug("geolocation instance is %s", bundle.obj.geo_location.__class__.__name__)
+        LOGGER.debug("geolocation is %s", bundle.obj.geo_location)
+        return super(SaveMeetingResource, self).save(bundle, skip_errors)
 
     class Meta(object):
         ''' meta info '''

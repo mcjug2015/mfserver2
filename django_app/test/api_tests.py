@@ -2,7 +2,21 @@
 # pylint: disable=no-member, protected-access
 from django.test.testcases import TestCase
 from tastypie.exceptions import NotFound
-from django_app.api import ExceptionThrowingModelResource
+from django_app.api import ExceptionThrowingModelResource, SaveMeetingResource
+from django_app.models import Meeting
+from mockito.mocking import mock
+
+
+class SaveMeetingTests(TestCase):
+    ''' test the custom savemeeting method '''
+
+    def test_save(self):
+        ''' test for the custom savemeeting method '''
+        bundle = mock()
+        bundle.data = {'geo_location': {'coordinates': [-76, 35]}}
+        bundle.obj = Meeting()
+        retval = SaveMeetingResource().save(bundle)
+        self.assertIsNotNone(retval)
 
 
 class ExceptionThrowingModelResourceTests(TestCase):
