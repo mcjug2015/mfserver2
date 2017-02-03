@@ -13,9 +13,9 @@ send in csrf referer + token + cookie + login creds to get session id
 curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' https://127.0.0.1/mfserver2/login_async/
 
 
-send in the latest referer + csrf cookie + session id to make authenticated requests
+send in the token + csrf cookie + session id to make authenticated requests
 
-curl -f -k -v -H "referer: https://127.0.0.1" --cookie "csrftoken=bzmTnfiD0l64NsyAjvl7U2yidWSwRiIMYAqXtpJEYLI6CQQ9U6VPxC92BiyoWMa7" --cookie "sessionid=7c3zwkt8ggxm8a6ff8i87i3wlxr6cxyp" https://127.0.0.1/mfserver2/api/v1/auth/user/?format=json
+curl -f -k -v --cookie "csrftoken=7Lq24AZ7D7itnOCvdhQNLoa3FL2oGUFw8z7t9djRmtNijP1dtgCHXRJE3W7bpzwL;sessionid=dnggyjcepbv892w55ag0pyi77qwwhff4" -H "X-CSRFToken: 7Lq24AZ7D7itnOCvdhQNLoa3FL2oGUFw8z7t9djRmtNijP1dtgCHXRJE3W7bpzwL" -H "referer: https://127.0.0.1"
 
 
 
