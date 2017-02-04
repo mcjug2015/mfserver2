@@ -78,24 +78,30 @@ curl -f -k -v --cookie "csrftoken=THE_TOKEN;sessionid=dnggyjcepbv892w55ag0pyi77q
 {"status": "good to go", "status_code": 200}
 
 
-[dtuser@localhost code]$ curl -f -k -v --cookie "csrftoken=GU9P5ta5EKp3AV1aIggYIDdKirchsJrnu3tzfRVXtY2JWhMGw1OiBpPDV3nDlxCW" --cookie "sessionid=ax19nlkys9069gi3rtslv1h9wjnk0o7e" http://127.0.0.1:8000/mfserver2/api/v1/auth/user/1/?format=json
-* About to connect() to 127.0.0.1 port 8000 (#0)
-*   Trying 127.0.0.1...
-* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+victors-MacBook-Pro:~ vsemenov$ curl -f -k -v --cookie "csrftoken=VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ;sessionid=2wxndvsgxnyh8rgh2liu139g6qscl3ci" -H "X-CSRFToken: VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ" -H "referer: https://138.197.21.211" -H "Content-Type: application/json" https://138.197.21.211/mfserver2/api/v1/auth/user/1/?format=json
+*   Trying 138.197.21.211...
+* Connected to 138.197.21.211 (138.197.21.211) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+* Server certificate: localhost
 > GET /mfserver2/api/v1/auth/user/1/?format=json HTTP/1.1
-> User-Agent: curl/7.29.0
-> Host: 127.0.0.1:8000
+> Host: 138.197.21.211
+> User-Agent: curl/7.43.0
 > Accept: */*
-> Cookie: sessionid=ax19nlkys9069gi3rtslv1h9wjnk0o7e
+> Cookie: csrftoken=VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ;sessionid=2wxndvsgxnyh8rgh2liu139g6qscl3ci
+> X-CSRFToken: VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ
+> referer: https://138.197.21.211
+> Content-Type: application/json
 > 
-* HTTP 1.0, assume close after body
-< HTTP/1.0 200 OK
-< Date: Fri, 13 Jan 2017 01:44:03 GMT
-< Server: WSGIServer/0.1 Python/2.7.5
+< HTTP/1.1 200 OK
+< Server: nginx/1.10.2
+< Date: Sat, 04 Feb 2017 17:36:24 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
 < Vary: Accept, Cookie
 < X-Frame-Options: SAMEORIGIN
-< Content-Type: application/json
 < Cache-Control: no-cache
+< Strict-Transport-Security: max-age=31536000
 < 
-* Closing connection 0
-{"date_joined": "2016-09-21T00:37:55.385925", "email": "test@test.com", "first_name": "", "id": 1, "is_active": true, "is_staff": true, "last_login": "2017-01-13T01:32:33.570347", "last_name": "", "resource_uri": "/mfserver2/api/v1/auth/user/1/", "username": "admin"}
+* Connection #0 to host 138.197.21.211 left intact
+{"date_joined": "2017-02-04T17:23:38.078321", "email": "test@test.com", "first_name": "", "id": 1, "is_active": true, "is_staff": true, "last_login": "2017-02-04T17:30:10.312510", "last_name": "", "resource_uri": "/mfserver2/api/v1/auth/user/1/", "username": "admin"}
