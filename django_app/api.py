@@ -63,6 +63,9 @@ class MeetingResource(ExceptionThrowingModelResource):
         ''' meta info '''
         queryset = Meeting.objects.all()
         allowed_methods = ['get']
+        filtering = {'name': ('icontains'),
+                     'start_time': ('gte'),
+                     'day_of_week': (ALL)}
 
 
 class SaveMeetingResource(ExceptionThrowingModelResource):
