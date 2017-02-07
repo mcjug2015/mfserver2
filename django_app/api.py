@@ -6,10 +6,13 @@ from tastypie.contrib.gis.resources import ModelResource
 from tastypie.constants import ALL
 from tastypie.authentication import SessionAuthentication
 from tastypie.exceptions import NotFound
-from django.contrib.gis.geos.geometry import GEOSGeometry
+from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404, HttpResponseNotFound
+from django.contrib.gis.measure import D
+from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.contrib.auth.models import User
+from django.contrib.gis.geos.factory import fromstr
 from django_app.models import MeetingType, Meeting
 from django_app.auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
@@ -52,12 +55,36 @@ class MeetingTypeResource(ExceptionThrowingModelResource):
         ''' meta info '''
         queryset = MeetingType.objects.all()
         allowed_methods = ['get']
+        max_limit = 50
 
 
 class MeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint '''
     creator = fields.ToOneField(UserResource, 'creator')
     types = fields.ToManyField(MeetingTypeResource, 'types')
+
+    def build_filters(self, filters=None, ignore_bad_filters=False):
+        if filters is None:
+            filters = {}
+        orm_filters = super(MeetingResource, self).build_filters(filters)
+        if 'lat' in filters and 'long' in filters and 'distance' in filters:
+            pnt = fromstr('POINT(%s %s)' % (filters['long'], filters['lat']), srid=4326)
+            orm_filters.update({'custom': Q(geo_location__distance_lte=(pnt, D(mi=filters['distance'])))})
+        return orm_filters
+
+    def apply_filters(self, request, applicable_filters):
+        if 'custom' in applicable_filters:
+            custom = applicable_filters.pop('custom')
+        else:
+            custom = None
+        semi_filtered = super(MeetingResource, self).apply_filters(request, applicable_filters)
+        return semi_filtered.filter(custom) if custom else semi_filtered
+
+    def apply_sorting(self, objects, options=None):
+        if options and 'lat' in options and 'long' in options and 'distance' in options:
+            pnt = fromstr('POINT(%s %s)' % (options['long'], options['lat']), srid=4326)
+            return objects.distance(pnt).order_by('distance')
+        return super(MeetingResource, self).apply_sorting(objects, options)
 
     class Meta(object):
         ''' meta info '''
@@ -66,6 +93,7 @@ class MeetingResource(ExceptionThrowingModelResource):
         filtering = {'name': ('icontains'),
                      'start_time': ('gte'),
                      'day_of_week': (ALL)}
+        max_limit = 50
 
 
 class SaveMeetingResource(ExceptionThrowingModelResource):
@@ -94,3 +122,4 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
         allowed_methods = ['get', 'post']
         authentication = SessionAuthentication()
         authorization = OwnerObjectsOnlyAuthorization()
+        max_limit = 50

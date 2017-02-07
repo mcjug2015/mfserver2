@@ -37,7 +37,7 @@ def run_tests():
     _ensure_virtualenv()
     local('rm -rf py_coverage')
     local('coverage erase')
-    local('coverage run --branch manage.py test')
+    local('coverage run --branch manage.py test django_app.test')
     local('coverage html -d py_coverage --include=django_app/*')
     local('coverage report -m --fail-under=100 --include=django_app/* --omit=django_app/migrations/* --omit=django_app/test_py_integration/*')
 

@@ -14,7 +14,8 @@ class MeetingResourceTests(TestCase):
         filter_str = "/mfserver2/api/v1/meeting/?name__icontains=weso&"
         filter_str += "start_time__gte=20:30:00&"
         filter_str += "day_of_week__in=1&"
-        filter_str += "day_of_week__in=3"
+        filter_str += "day_of_week__in=3&"
+        filter_str += "lat=39.0&long=-77.0&distance=0.1"
         response = self.client.get(filter_str)
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
