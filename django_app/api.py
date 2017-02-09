@@ -1,5 +1,5 @@
 ''' module for tastypie endpoints '''
-# pylint: disable=too-few-public-methods, no-member, misplaced-bare-raise
+# pylint: disable=too-few-public-methods, no-member, misplaced-bare-raise, too-many-boolean-expressions
 import logging
 from tastypie import fields
 from tastypie.contrib.gis.resources import ModelResource
@@ -81,7 +81,8 @@ class MeetingResource(ExceptionThrowingModelResource):
         return semi_filtered.filter(custom) if custom else semi_filtered
 
     def apply_sorting(self, objects, options=None):
-        if options and 'lat' in options and 'long' in options and 'distance' in options:
+        if options and 'lat' in options and 'long' in options and 'distance' in options and\
+                'order_by' in options and options['order_by'] == 'distance':
             pnt = fromstr('POINT(%s %s)' % (options['long'], options['lat']), srid=4326)
             return objects.distance(pnt).order_by('distance')
         return super(MeetingResource, self).apply_sorting(objects, options)
@@ -93,6 +94,7 @@ class MeetingResource(ExceptionThrowingModelResource):
         filtering = {'name': ('icontains'),
                      'start_time': ('gte'),
                      'day_of_week': (ALL)}
+        ordering = ['name', 'start_time', 'day_of_week']
         max_limit = 50
 
 

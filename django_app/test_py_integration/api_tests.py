@@ -15,12 +15,23 @@ class MeetingResourceTests(TestCase):
         filter_str += "start_time__gte=20:30:00&"
         filter_str += "day_of_week__in=1&"
         filter_str += "day_of_week__in=3&"
-        filter_str += "lat=39.0&long=-77.0&distance=0.1"
+        filter_str += "lat=39.0&long=-77.0&distance=0.1&order_by=distance"
         response = self.client.get(filter_str)
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['meta']['total_count'], 1)
         self.assertEquals(resp_obj['objects'][0]['name'], 'awesome meeting')
+
+    def test_non_distance_sorting(self):
+        ''' test filtering '''
+        self.client.login(username='test_user', password='testing123')
+        filter_str = "/mfserver2/api/v1/meeting/?"
+        filter_str += "lat=39.0&long=-77.0&distance=1000&order_by=-day_of_week"
+        response = self.client.get(filter_str)
+        self.assertEquals(response.status_code, 200)
+        resp_obj = json.loads(response.content)
+        self.assertEquals(resp_obj['meta']['total_count'], 2)
+        self.assertEquals(resp_obj['objects'][0]['name'], 'another awesome meeting')
 
 
 class SaveMeetingResourceTest(TestCase):

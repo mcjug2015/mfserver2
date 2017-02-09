@@ -73,7 +73,8 @@ class MeetingTests(TestCase):
             Make sure default tastypie behaviour occurs when no custom filter is passed in
         '''
         retval = self.the_resource.apply_sorting(Meeting.objects.all(),
-                                                 {'lat': 39.1, 'long': -77.1, 'distance': 1000})
+                                                 {'lat': 39.1, 'long': -77.1, 'distance': 1000,
+                                                  'order_by': 'distance'})
         self.assertEquals(retval.count(), 2)
         self.assertEquals(retval[0].name, 'another awesome meeting')
 
