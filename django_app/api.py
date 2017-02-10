@@ -6,6 +6,7 @@ from tastypie.contrib.gis.resources import ModelResource
 from tastypie.constants import ALL
 from tastypie.authentication import SessionAuthentication
 from tastypie.exceptions import NotFound
+from tastypie.validation import FormValidation, Validation
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import Http404, HttpResponseNotFound
@@ -16,6 +17,7 @@ from django.contrib.gis.geos.factory import fromstr
 from django_app.models import MeetingType, Meeting
 from django_app.auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
+from django_app.forms import MeetingForm
 LOGGER = logging.getLogger(__name__)
 
 
@@ -98,6 +100,26 @@ class MeetingResource(ExceptionThrowingModelResource):
         max_limit = 50
 
 
+class MeetingValidation(Validation):
+    ''' custom validation that does extra stuff meeting validation can not do '''
+
+    def __init__(self):
+        super(MeetingValidation, self).__init__()
+        self.form_validation = FormValidation(form_class=MeetingForm)
+
+    def is_valid(self, bundle, request=None):
+        errors = self.form_validation.is_valid(bundle, request)
+        if errors:
+            return errors
+        coordinates = bundle.data['geo_location']['coordinates']
+        coordinates = [float(coordinates[0]), float(coordinates[1])]
+        if coordinates[0] < -180 or coordinates[0] > 180:
+            errors['geo_location'] = "Longitude must be between -180 and 180, it is %s" % coordinates[0]
+        if coordinates[1] < -90 or coordinates[1] > 90:
+            errors['geo_location'] = "Lattitude must be between -90 and 90, it is %s" % coordinates[1]
+        return errors
+
+
 class SaveMeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint for saving meetings '''
     creator = fields.ToOneField(UserResource, 'creator')
@@ -124,4 +146,5 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
         allowed_methods = ['get', 'post']
         authentication = SessionAuthentication()
         authorization = OwnerObjectsOnlyAuthorization()
+        validation = MeetingValidation()
         max_limit = 50

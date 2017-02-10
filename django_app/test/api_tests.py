@@ -6,7 +6,7 @@ from django.contrib.gis.measure import D
 from django.db.models import Q
 from tastypie.exceptions import NotFound
 from django_app.api import ExceptionThrowingModelResource, SaveMeetingResource,\
-    MeetingResource
+    MeetingResource, MeetingValidation
 from django_app.models import Meeting
 from mockito.mocking import mock
 
@@ -105,3 +105,47 @@ class ExceptionThrowingModelResourceTests(TestCase):
         exception = NotFound()
         response = ExceptionThrowingModelResource()._handle_500(None, exception)
         self.assertTrue(response.status_code, 404)
+
+
+class MeetingValidationTests(TestCase):
+    ''' tests for the meeting validation class '''
+
+    def setUp(self):
+        ''' set up test '''
+        self.meeting_validation = MeetingValidation()
+        self.meeting_obj = {"geo_location": {"coordinates": ['-77.0', '39.0'],
+                                             "type": "Point"},
+                            "name": "test meeting",
+                            "creator": "irrelevant here",
+                            "day_of_week": 7,
+                            "start_time": "22:30",
+                            "end_time": "23:30",
+                            "description": "test meeting",
+                            "address": "test address",
+                            "is_active": True,
+                            "types": []}
+        self.bundle = mock()
+        self.bundle.data = self.meeting_obj
+
+    def test_fail_on_form(self):
+        ''' fail when one of the form defined validations fails '''
+        self.meeting_obj['day_of_week'] = 85
+        retval = self.meeting_validation.is_valid(self.bundle)
+        self.assertIsNotNone(retval)
+        self.assertIn('day_of_week', retval)
+
+    def test_fail_on_lat(self):
+        ''' fail with an invalid latitude '''
+        self.meeting_obj['geo_location']['coordinates'][1] = 91
+        retval = self.meeting_validation.is_valid(self.bundle)
+        self.assertIn('geo_location', retval)
+
+    def test_fail_on_long(self):
+        ''' fail with an invalid longitude '''
+        self.meeting_obj['geo_location']['coordinates'][0] = -180.01
+        retval = self.meeting_validation.is_valid(self.bundle)
+        self.assertIn('geo_location', retval)
+
+    def test_pass_validation(self):
+        ''' pass validation '''
+        self.assertFalse(self.meeting_validation.is_valid(self.bundle))
