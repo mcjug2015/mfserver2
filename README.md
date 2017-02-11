@@ -2,6 +2,15 @@
 meeting finder server version 2
 
 
+To setup locally do:
+
+sudo yum install -y git
+git clone https://github.com/mcjug2015/mfserver2.git /tmp/mfserver2
+sh /tmp/mfserver2/provisioning/misc/do_salt.sh
+
+If ip address is different from 127.0.0.1 go to django_proj/settings.py and add ip to ALLOWED_HOSTS
+
+
 To make csrf and sessionid authenticated requests take a look in docs.authenticated_requests.md or django_app.management.commands.get_csrf_session.py
 
 

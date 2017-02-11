@@ -26,8 +26,8 @@ yum-packages:
       - liberation-narrow-fonts
       - liberation-sans-fonts
       - liberation-serif-fonts
-      - {{pillar['pg_server_name']}}: {{pillar['pg_server_version']}}
-      - {{pillar['pg_devel_name']}}: {{pillar['pg_devel_version']}}
+      - {{pillar['pg_server_name']}}
+      - {{pillar['pg_devel_name']}}
       - {{pillar['postgis_name']}}: {{pillar['postgis_version']}}
     - require:
       - pkgrepo: postgres-repo
