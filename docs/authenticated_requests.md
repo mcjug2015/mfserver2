@@ -1,25 +1,28 @@
 # login stuff
 Read this document for how to manually make authenticated requests. There is also a helper command in django_app.management.commands.get_csrf_session.py that will take in your username and password and supply csrf token and session id. E.G. 
+```
 python manage.py get_csrf_session --initial_url https://127.0.0.1/mfserver2/welcome/ --login_url https://127.0.0.1/mfserver2/login_async/
+```
 
 
 grab the csrf token value and cookie from
-
+```
 curl -f -k -v https://127.0.0.1/mfserver2/welcome/
-
+```
 
 send in csrf referer + token + cookie + login creds to get session id
-
+```
 curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' https://127.0.0.1/mfserver2/login_async/
-
+```
 
 send in the token + session id to make authenticated requests
-
+```
 curl -f -k -v --cookie "csrftoken=THE_TOKEN;sessionid=dnggyjcepbv892w55ag0pyi77qwwhff4" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1"
-
+```
 
 
 ## login stuff details
+```
 [dtuser@localhost code]$ curl -f -k -v http://127.0.0.1:8000/mfserver2/welcome/
 * About to connect() to 127.0.0.1 port 8000 (#0)
 *   Trying 127.0.0.1...
@@ -48,8 +51,9 @@ curl -f -k -v --cookie "csrftoken=THE_TOKEN;sessionid=dnggyjcepbv892w55ag0pyi77q
     <div>curl/7.29.0</div>
 </body>
 * Closing connection 0
+```
 
-
+```
 [dtuser@localhost code]$ curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: Ss9C9wEUJ1lgbCJfkPTSOtprmv87xT36ZssFc4OZw8jrPswtacGvA38MxcuuNcx8" --cookie "csrftoken=w5AtKa57z6ZTW1BhhJ1o3zmzsRyOBAUlD5TwNIfcmdX4ARov76O1P95UDyUbRTon"  -X POST -d '{"username": "admin", "password": "admin"}' http://127.0.0.1:8000/mfserver2/login_async/
 * About to connect() to 127.0.0.1 port 8000 (#0)
 *   Trying 127.0.0.1...
@@ -76,8 +80,9 @@ curl -f -k -v --cookie "csrftoken=THE_TOKEN;sessionid=dnggyjcepbv892w55ag0pyi77q
 < 
 * Closing connection 0
 {"status": "good to go", "status_code": 200}
+```
 
-
+```
 victors-MacBook-Pro:~ vsemenov$ curl -f -k -v --cookie "csrftoken=VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ;sessionid=2wxndvsgxnyh8rgh2liu139g6qscl3ci" -H "X-CSRFToken: VSbkFc6RSaAbnMrGnVySUSPqEaiSpXzQaZU4RC10O6psB7XyNiuON25KaVpIdrEZ" -H "referer: https://138.197.21.211" -H "Content-Type: application/json" https://138.197.21.211/mfserver2/api/v1/auth/user/1/?format=json
 *   Trying 138.197.21.211...
 * Connected to 138.197.21.211 (138.197.21.211) port 443 (#0)
@@ -105,3 +110,4 @@ victors-MacBook-Pro:~ vsemenov$ curl -f -k -v --cookie "csrftoken=VSbkFc6RSaAbnM
 < 
 * Connection #0 to host 138.197.21.211 left intact
 {"date_joined": "2017-02-04T17:23:38.078321", "email": "test@test.com", "first_name": "", "id": 1, "is_active": true, "is_staff": true, "last_login": "2017-02-04T17:30:10.312510", "last_name": "", "resource_uri": "/mfserver2/api/v1/auth/user/1/", "username": "admin"}
+```
