@@ -2,9 +2,9 @@
 meeting finder server version 2
 
 
-To setup locally get a centos7 that you can ssh to without port forwarding and do:
+To setup locally get a centos7 that you can ssh to without port forwarding and as root do:
 ```
-sudo yum install -y git
+yum install -y git
 git clone https://github.com/mcjug2015/mfserver2.git /tmp/mfserver2
 sh /tmp/mfserver2/provisioning/misc/do_salt.sh
 ```
