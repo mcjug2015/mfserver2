@@ -9,7 +9,7 @@ git clone https://github.com/mcjug2015/mfserver2.git /tmp/mfserver2
 sh /tmp/mfserver2/provisioning/misc/do_salt.sh
 ```
 
-If ip address is different from 127.0.0.1 switch to reg_user and go to /opt/mfserver2/code/django_proj/settings.py and add ip to ALLOWED_HOSTS. After that do:
+If ip address is different from 127.0.0.1 switch to reg_user and go to /opt/mfserver2/code/django_proj/settings.py and add ip to ALLOWED_HOSTS at line 28(it'll look something like this ALLOWED_HOSTS = ['127.0.0.1', '192.168.2.5']). After that do:
 ```
 su - reg_user
 cd /opt/mfserver2/code
