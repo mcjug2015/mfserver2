@@ -13,6 +13,7 @@ yum-packages:
       - wget
       - nginx
       - openssl-devel
+      - firewalld
       - python-devel: 2.7.5-48.el7
       - libffi-devel: 3.0.13-18.el7
       - setools-console: 3.3.8-1.1.el7

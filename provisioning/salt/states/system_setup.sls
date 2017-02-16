@@ -29,3 +29,26 @@ init_postgres:
     - unless: ls {{pillar['pg_conf_path']}}
     - require:
       - pkg: yum-packages
+
+
+firewalld:
+  service.running:
+    - enable: True
+    - require:
+      - pkg: yum-packages
+
+
+enable_http:
+  cmd.run:
+    - name: |
+        firewall-cmd --zone=public --add-service=http --permanent
+        firewall-cmd --zone=public --add-service=https --permanent
+    - requre:
+      - service: firewalld
+
+
+reload_firewalld:
+  cmd.run:
+    - name: firewall-cmd --reload
+    - requre:
+      - cmd: enable_http
