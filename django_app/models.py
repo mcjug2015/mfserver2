@@ -3,6 +3,17 @@
 from __future__ import unicode_literals
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+
+class UserConfirmation(models.Model):
+    ''' db thing that allows users to confirm accounts '''
+    user = models.ForeignKey(User, related_name='confirmations', null=False, blank=False, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(null=False, blank=False, default=timezone.now)
+    expiration_date = models.DateTimeField(null=False, blank=False)
+    confirmation_key = models.CharField(max_length=64, null=False, blank=False)
+    is_confirmed = models.BooleanField(default=False)
+    confirmation_date = models.DateTimeField(null=True, blank=True)
 
 
 class CigarShop(models.Model):
