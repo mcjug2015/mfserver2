@@ -7,10 +7,40 @@ from django.utils import timezone
 from django_app.models import UserConfirmation
 
 
+def get_user_to_register(email, username):
+    '''
+        if no matching user exists will return an unsaved user obj
+        if matching user exists, is inactive and has an expired unconfirmed conf
+            that user will be returned
+        in all other cases None will be returned since registration should not go through
+    '''
+    retval = {"user": None,
+              "status": ""}
+    user_query = User.objects.filter(email=email, username=username)
+    if user_query.count() == 0:
+        user = User(username=username, email=email, first_name='NOT_SET', last_name='NOT_SET',
+                    is_active=False, is_superuser=False, is_staff=False)
+        retval["user"] = user
+        retval["status"] = "brand new user %s" % username
+        return retval
+    user = user_query[0:1][0]
+    conf_query = user.confirmations.filter(is_confirmed=False, expiration_date__lt=timezone.now())
+    if not user.is_active and conf_query.count() > 0:
+        retval["user"] = user
+        retval["status"] = "inactive user %s with expired, unconfirmed conf" % username
+        return retval
+    retval["status"] = "registration should not proceed for %s. is_active: %s; loose conf #%s" % (username,
+                                                                                                  user.is_active,
+                                                                                                  conf_query.count())
+    return retval
+
+
 def create_user_and_conf(email, username, password):
     ''' create an inactive user and a conf to activate him with '''
-    user = User(username=username, email=email, first_name='NOT_SET', last_name='NOT_SET', is_active=False,
-                is_superuser=False, is_staff=False)
+    user_dict = get_user_to_register(email, username)
+    user = user_dict["user"]
+    if not user:
+        return user_dict
     user.set_password(password)
     user.save()
     user_confirmation = UserConfirmation(user=user)
@@ -18,4 +48,5 @@ def create_user_and_conf(email, username, password):
     user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
                                                   for i in range(0, 64)])  # pylint: disable=unused-variable
     user_confirmation.save()
-    return user, user_confirmation
+    user_dict["conf"] = user_confirmation
+    return user_dict
