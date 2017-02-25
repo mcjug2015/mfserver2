@@ -1,4 +1,5 @@
 ''' user services module '''
+# pylint: disable=no-member
 import datetime
 import random
 import string
@@ -50,3 +51,21 @@ def create_user_and_conf(email, username, password):
     user_confirmation.save()
     user_dict["conf"] = user_confirmation
     return user_dict
+
+
+def complete_user_registration(conf_str):
+    ''' set user to active if the conf str is good '''
+    retval = {"status": "Confirmation ivalid or expired, unable to complete user registration"}
+    conf_query = UserConfirmation.objects.filter(confirmation_key=conf_str,
+                                                 is_confirmed=False,
+                                                 expiration_date__gt=timezone.now())
+    if conf_query.count() == 0:
+        return retval
+    conf = conf_query[0:1][0]
+    conf.is_confirmed = True
+    conf.confirmation_date = timezone.now()
+    conf.save()
+    conf.user.is_active = True
+    conf.user.save()
+    retval["status"] = "Successfully completed registration for %s" % conf.user.username
+    return retval

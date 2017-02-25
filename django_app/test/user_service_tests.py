@@ -74,3 +74,29 @@ class CreateUserAnConfTests(TestCase):
         self.assertEquals(UserConfirmation.objects.all().count(), 1)
         self.assertEquals(result["user"].username, 'mooo1')
         self.assertEquals(len(result["conf"].confirmation_key), 64)
+
+
+class CompleteUserRegistration(TestCase):
+    ''' tests for the complete user registration method '''
+
+    def setUp(self):
+        ''' set up tests '''
+        User.objects.all().update(is_active=False)
+
+    def test_fail_no_conf(self):
+        ''' make sure method fails if no conf exists with the str passed in '''
+        result = user_service.complete_user_registration("wrong")
+        self.assertEquals(result["status"],
+                          "Confirmation ivalid or expired, unable to complete user registration")
+        self.assertEquals(User.objects.filter(is_active=True).count(), 0)
+
+    def test_success(self):
+        ''' test successfull registration completion '''
+        user = User.objects.get(username="admin")
+        user_confirmation = UserConfirmation(user=user)
+        user_confirmation.confirmation_key = "right"
+        user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
+        user_confirmation.save()
+        result = user_service.complete_user_registration("right")
+        self.assertIn("Successfully completed registration for", result["status"])
+        self.assertEquals(User.objects.filter(is_active=True).count(), 1)

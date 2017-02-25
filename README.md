@@ -22,9 +22,6 @@ su - sudo_user
 cd /opt/mfserver2/code
 source /opt/mfserver2/venv/bin/activate
 fab sudo_refresh_local
-sudo firewall-cmd --zone=public --add-service=http --permanent
-sudo firewall-cmd --zone=public --add-service=https --permanent
-sudo firewall-cmd --reload
 ```
 Now go to https://ip_address/admin/ or https://ip_address/mfserver2/welcome/ and stuff should come up. U/p is admin/admin
 
