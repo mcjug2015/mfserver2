@@ -19,7 +19,8 @@ def get_user_to_register(email, username):
               "status": ""}
     user_query = User.objects.filter(email=email, username=username)
     if user_query.count() == 0:
-        user = User(username=username, email=email, first_name='NOT_SET', last_name='NOT_SET',
+        next_pk = User.objects.latest('pk').pk + 1
+        user = User(pk=next_pk, username=username, email=email, first_name='NOT_SET', last_name='NOT_SET',
                     is_active=False, is_superuser=False, is_staff=False)
         retval["user"] = user
         retval["status"] = "brand new user %s" % username
@@ -55,7 +56,8 @@ def create_user_and_conf(email, username, password):
 
 def complete_user_registration(conf_str):
     ''' set user to active if the conf str is good '''
-    retval = {"status": "Confirmation ivalid or expired, unable to complete user registration"}
+    retval = {"status": "Confirmation ivalid or expired, unable to complete user registration",
+              "code": 400}
     conf_query = UserConfirmation.objects.filter(confirmation_key=conf_str,
                                                  is_confirmed=False,
                                                  expiration_date__gt=timezone.now())
@@ -68,4 +70,5 @@ def complete_user_registration(conf_str):
     conf.user.is_active = True
     conf.user.save()
     retval["status"] = "Successfully completed registration for %s" % conf.user.username
+    retval["code"] = 200
     return retval

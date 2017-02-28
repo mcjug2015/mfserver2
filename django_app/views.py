@@ -43,6 +43,13 @@ class IndexView(View):
 class RegisterUserView(View):
     ''' view for user registration '''
 
+    def get(self, request):
+        ''' use the conf to activate the user '''
+        conf_key = request.GET.get('confirmation', None)
+        result = user_service.complete_user_registration(conf_key)
+        return HttpResponse(status=result["code"],
+                            content=result["status"])
+
     def post(self, request):
         ''' register user with details provided '''
         json_obj = json.loads(request.body)

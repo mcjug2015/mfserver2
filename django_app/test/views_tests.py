@@ -22,7 +22,15 @@ class RegisterUserViewTests(TestCase):
         ''' tear down test '''
         unstub()
 
-    def test_success(self):
+    def test_get(self):
+        ''' make sure that get with a valid confirmation param works '''
+        when(views.user_service).complete_user_registration(any()).thenReturn({"code": 200,
+                                                                               "status": "test"})
+        response = self.client.get("/mfserver2/register/", {"confirmation": "test_conf"})
+        self.assertEquals(response.status_code, 200)
+        verify(views.user_service).complete_user_registration(any())
+
+    def test_post_success(self):
         ''' test successfully registering a user '''
         self.result["user"] = User.objects.get(username="admin")
         self.result["status"] = "test good status"
@@ -34,7 +42,7 @@ class RegisterUserViewTests(TestCase):
         self.assertEquals(response.status_code, 201)
         verify(views).send_email_to_user(any(), any(), any())
 
-    def test_fail(self):
+    def test_post_fail(self):
         ''' test registering an inelligible user '''
         self.result["user"] = None
         self.result["status"] = "test bad status"
