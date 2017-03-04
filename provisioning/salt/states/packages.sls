@@ -9,18 +9,18 @@ postgres-repo:
 yum-packages:
   pkg.installed:
     - pkgs:
-      - nano: 2.3.1-10.el7
+      - nano
       - wget
       - nginx
       - openssl-devel
       - firewalld
-      - python-devel: 2.7.5-48.el7
-      - libffi-devel: 3.0.13-18.el7
-      - setools-console: 3.3.8-1.1.el7
-      - gcc: 4.8.5-11.el7
-      - libcap-devel: 2.22-8.el7
-      - net-tools: 2.0-0.17.20131004git.el7
-      - policycoreutils: 2.5-9.el7
+      - python-devel
+      - libffi-devel
+      - setools-console
+      - gcc
+      - libcap-devel
+      - net-tools
+      - policycoreutils
       - uwsgi
       - uwsgi-plugin-python
       - liberation-mono-fonts
@@ -29,7 +29,7 @@ yum-packages:
       - liberation-serif-fonts
       - {{pillar['pg_server_name']}}
       - {{pillar['pg_devel_name']}}
-      - {{pillar['postgis_name']}}: {{pillar['postgis_version']}}
+      - {{pillar['postgis_name']}}
     - require:
       - pkgrepo: postgres-repo
 
