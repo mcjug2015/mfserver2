@@ -58,7 +58,7 @@ class RegisterUserView(View):
         result = user_service.create_user_and_conf(email, email, password)
         if result["user"]:
             LOGGER.info("Registered user %s, status: %s", email, result["status"])
-            link_address = request.build_absolute_uri() + '/?confirmation=' + result["conf"].confirmation_key
+            link_address = request.build_absolute_uri() + '?confirmation=' + result["conf"].confirmation_key
             message_text = "Click the link below to complete the registration process\n%s" % link_address
             send_email_to_user(result["user"], "Thank you for registering on Meeting Finder", message_text)
             return HttpResponse(status=201,
