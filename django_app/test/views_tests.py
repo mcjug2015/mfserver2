@@ -64,7 +64,7 @@ class LoginAsyncTests(TestCase):
         response = self.client.post('/mfserver2/login_async/',
                                     content_type='application/json',
                                     data=json.dumps(json_input))
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 403)
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['status_code'], 403)
         self.assertEquals(resp_obj['status'], 'wrong u/p or inactive user')
@@ -78,7 +78,7 @@ class LoginAsyncTests(TestCase):
         response = self.client.post('/mfserver2/login_async/',
                                     content_type='application/json',
                                     data=json.dumps(json_input))
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 403)
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['status_code'], 403)
         self.assertEquals(resp_obj['status'], 'wrong u/p or inactive user')

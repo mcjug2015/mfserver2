@@ -19,11 +19,11 @@ def login_async(request):
     user = authenticate(username=username, password=password)
     if user is not None:
         login(request, user)
-        return JsonResponse({'status': 'good to go',
-                             'status_code': 200})
+        return JsonResponse(status=200, data={'status': 'good to go',
+                                              'status_code': 200})
     else:
-        return JsonResponse({'status': 'wrong u/p or inactive user',
-                             'status_code': 403})
+        return JsonResponse(status=403, data={'status': 'wrong u/p or inactive user',
+                                              'status_code': 403})
 
 
 def logout_async(request):
