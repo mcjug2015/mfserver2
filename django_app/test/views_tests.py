@@ -145,3 +145,31 @@ class SendEmailToUserTest(TestCase):
                                             from_email=any(),
                                             recipient_list=any(),
                                             fail_silently=any())
+
+
+class ChangePasswordViewTests(TestCase):
+    ''' tests for the change password view '''
+    fixtures = ['users_groups_perms.json']
+
+    def test_wrong_old_password(self):
+        ''' make sure we get 401 when incorrect old password is sent in '''
+        self.client.login(username='test_user', password='testing123')
+        response = self.client.post("/mfserver2/change_password/",
+                                    content_type='application/json',
+                                    data=json.dumps({'old_password': "wrong",
+                                                     'new_password': "irrelevant"}))
+        self.assertEquals(response.status_code, 401)
+
+    def test_success(self):
+        ''' make sure successful password change logs user out '''
+        self.client.login(username='test_user', password='testing123')
+        response = self.client.post("/mfserver2/change_password/",
+                                    content_type='application/json',
+                                    data=json.dumps({'old_password': "testing123",
+                                                     'new_password': "1234abcd"}))
+        self.assertEquals(response.status_code, 200)
+        response = self.client.get('/admin/')
+        self.assertEquals(response.status_code, 302)
+        self.client.login(username='test_user', password='1234abcd')
+        response = self.client.get('/admin/')
+        self.assertEquals(response.status_code, 200)

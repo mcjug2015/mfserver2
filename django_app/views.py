@@ -68,6 +68,25 @@ class RegisterUserView(View):
                             content="User %s exists and can not re-register" % email)
 
 
+class ChangePasswordView(View):
+    ''' view for changing password '''
+
+    def post(self, request):
+        ''' parse old and new password from request, change user password, sign him out '''
+        json_obj = json.loads(request.body)
+        old_password = json_obj["old_password"]
+        new_password = json_obj["new_password"]
+        if not request.user.check_password(old_password):
+            return HttpResponse(status=401,
+                                content="Incorrect old password")
+        request.user.set_password(new_password)
+        request.user.save()
+        logout(request)
+        content = "Successfully changed password. You will need to log in with the new one."
+        return HttpResponse(status=200,
+                            content=content)
+
+
 def send_email_to_user(user, subject_text, message_text):
     ''' send email to user with supplied subject and body '''
     LOGGER.debug("About to send conf email with message %s", message_text)

@@ -2,8 +2,9 @@
 # pylint: disable=invalid-name
 from tastypie.api import Api
 from django.conf.urls import include, url
+from django.contrib.auth.decorators import login_required
 from django_app.views import IndexView, login_async, logout_async,\
-    RegisterUserView
+    RegisterUserView, ChangePasswordView
 from django_app.api import MeetingResource, MeetingTypeResource, UserResource,\
     SaveMeetingResource
 
@@ -21,4 +22,5 @@ urlpatterns = [
     url(r'^login_async/', login_async),
     url(r'^logout_async/', logout_async),
     url(r'^register/', RegisterUserView.as_view()),
+    url(r'^change_password/', login_required(ChangePasswordView.as_view())),
 ]
