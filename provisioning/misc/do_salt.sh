@@ -1,9 +1,10 @@
 #!/bin/bash
 
 /usr/bin/yum install -y epel-release
-/usr/bin/yum install -y salt-minion
 /usr/bin/yum install -y python2-pip
 /usr/bin/pip install pip==7.1.0
+/usr/bin/yum install -y salt-minion
+
 
 #let salt have access to all the projects files
 /usr/bin/rm -rf /tmp/mfserver2_copy/

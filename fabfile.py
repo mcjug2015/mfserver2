@@ -74,7 +74,6 @@ def sudo_docker_provision():
     local("""rm -rf dist""")
     local("""mkdir -p dist""")
     local("""tar --exclude='dist' --exclude='.git' -czf  dist/mfserver2.tar.gz *""")
-    local("""sudo docker build --rm -t local/c7-systemd provisioning/docker/c7-systemd""")
     local("""sudo docker build --rm -t local/c7-mfserver2 provisioning/docker/c7-mfserver2""")
     container_id = local("""sudo docker run --privileged -d -t -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 80:80 -p 443:443 local/c7-mfserver2""", capture=True)
     local("""sudo docker cp dist/mfserver2.tar.gz %s:/root""" % container_id)
