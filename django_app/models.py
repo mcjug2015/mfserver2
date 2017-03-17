@@ -14,6 +14,7 @@ class UserConfirmation(models.Model):
     confirmation_key = models.CharField(max_length=64, null=False, blank=False)
     is_confirmed = models.BooleanField(default=False)
     confirmation_date = models.DateTimeField(null=True, blank=True)
+    conf_type = models.CharField(max_length=64, null=False, blank=False, default="registration")
 
 
 class CigarShop(models.Model):

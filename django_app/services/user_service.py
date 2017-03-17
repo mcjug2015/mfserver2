@@ -26,7 +26,8 @@ def get_user_to_register(email, username):
         retval["status"] = "brand new user %s" % username
         return retval
     user = user_query[0:1][0]
-    conf_query = user.confirmations.filter(is_confirmed=False, expiration_date__lt=timezone.now())
+    conf_query = user.confirmations.filter(conf_type="registration", is_confirmed=False,
+                                           expiration_date__lt=timezone.now())
     if not user.is_active and conf_query.count() > 0:
         retval["user"] = user
         retval["status"] = "inactive user %s with expired, unconfirmed conf" % username
@@ -45,7 +46,7 @@ def create_user_and_conf(email, username, password):
         return user_dict
     user.set_password(password)
     user.save()
-    user_confirmation = UserConfirmation(user=user)
+    user_confirmation = UserConfirmation(user=user, conf_type="registration")
     user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
     user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
                                                   for i in range(0, 64)])  # pylint: disable=unused-variable
@@ -59,6 +60,7 @@ def complete_user_registration(conf_str):
     retval = {"status": "Confirmation ivalid or expired, unable to complete user registration",
               "code": 400}
     conf_query = UserConfirmation.objects.filter(confirmation_key=conf_str,
+                                                 conf_type="registration",
                                                  is_confirmed=False,
                                                  expiration_date__gt=timezone.now())
     if conf_query.count() == 0:

@@ -19,7 +19,7 @@ class GetUserToRegisterTests(TestCase):
         self.assertIsNone(result["user"])
 
         user = User.objects.get(username="admin")
-        user_confirmation = UserConfirmation(user=user)
+        user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
         result = user_service.get_user_to_register("test@test.com", "admin")
@@ -30,7 +30,7 @@ class GetUserToRegisterTests(TestCase):
         user = User.objects.get(username="admin")
         user.is_active = False
         user.save()
-        user_confirmation = UserConfirmation(user=user)
+        user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() - datetime.timedelta(days=50)
         user_confirmation.save()
         result = user_service.get_user_to_register("test@test.com", "admin")
@@ -74,6 +74,7 @@ class CreateUserAnConfTests(TestCase):
         self.assertEquals(UserConfirmation.objects.all().count(), 1)
         self.assertEquals(result["user"].username, 'mooo1')
         self.assertEquals(len(result["conf"].confirmation_key), 64)
+        self.assertEquals(result["conf"].conf_type, "registration")
 
 
 class CompleteUserRegistration(TestCase):
@@ -93,7 +94,7 @@ class CompleteUserRegistration(TestCase):
     def test_success(self):
         ''' test successfull registration completion '''
         user = User.objects.get(username="admin")
-        user_confirmation = UserConfirmation(user=user)
+        user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.confirmation_key = "right"
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
