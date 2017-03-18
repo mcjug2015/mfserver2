@@ -1,5 +1,5 @@
 ''' views module '''
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, no-member
 import json
 import logging
 import django.core.mail as django_mail
@@ -8,6 +8,7 @@ from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django_app.services import user_service
+from django_app.models import UserConfirmation
 LOGGER = logging.getLogger(__name__)
 
 
@@ -85,6 +86,33 @@ class ChangePasswordView(View):
         content = "Successfully changed password. You will need to log in with the new one."
         return HttpResponse(status=200,
                             content=content)
+
+
+class RequestResetPassword(View):
+    ''' view to reset password '''
+
+    def get(self, request):
+        ''' show user the form to reset password '''
+        conf_key = request.GET.get('confirmation', None)
+        reset_conf = UserConfirmation.objects.get(confirmation_key=conf_key,
+                                                  conf_type="password_reset")
+        return render(request, 'user/reset_password.html',
+                      context={"reset_conf": reset_conf})
+
+    def post(self, request):
+        ''' generate reset conf for user and send email with reset link '''
+        json_obj = json.loads(request.body)
+        email = json_obj["email"]
+        result = user_service.request_password_reset(email)
+        if result["conf"]:
+            LOGGER.info("Sending reset password link to user %s", email)
+            link_address = request.build_absolute_uri() + '?confirmation=' + result["conf"].confirmation_key
+            message_text = "Click the link below to reset your meetingfinder password\n%s" % link_address
+            send_email_to_user(result["user"], "Your meeting finder password reset", message_text)
+            return HttpResponse(status=200,
+                                content="Emailed password reset link to user %s " % email)
+        LOGGER.error("Failed reset password for user %s, reason: %s", email, result["status"])
+        return HttpResponse(status=400, content=result["status"])
 
 
 def send_email_to_user(user, subject_text, message_text):

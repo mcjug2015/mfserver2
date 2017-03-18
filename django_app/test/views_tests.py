@@ -3,6 +3,7 @@
 import json
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
 from mockito.mockito import unstub, when, verify
 from mockito.matchers import any  # pylint: disable=redefined-builtin
 from django_app import views
@@ -173,3 +174,52 @@ class ChangePasswordViewTests(TestCase):
         self.client.login(username='test_user', password='1234abcd')
         response = self.client.get('/admin/')
         self.assertEquals(response.status_code, 200)
+
+
+class RequestResetPasswordTests(TestCase):
+    ''' tests for the RequestResetPassword view '''
+
+    def setUp(self):
+        ''' set up test '''
+        self.result = {}
+        when(views).send_email_to_user(any(), any(), any()).thenReturn(None)
+        when(views.user_service).request_password_reset(any()).thenReturn(self.result)
+
+    def tearDown(self):
+        ''' tear down test '''
+        unstub()
+
+    def test_get(self):
+        ''' make sure view with username name confirmation key gets returned on get '''
+        user = User.objects.get(username="admin")
+        user_conf = UserConfirmation(confirmation_key="testing456", user=user,
+                                     conf_type="password_reset",
+                                     expiration_date=timezone.now())
+        user_conf.save()
+        response = self.client.get("/mfserver2/reset_password_request/",
+                                   {"confirmation": "testing456"})
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Reset password for admin", response.content)
+        self.assertIn("testing456", response.content)
+
+    def test_post_fail(self):
+        ''' 400 returned when user service does not create conf '''
+        self.result["conf"] = None
+        self.result["status"] = "test fail status"
+        response = self.client.post("/mfserver2/reset_password_request/",
+                                    content_type='application/json',
+                                    data=json.dumps({"email": "test@test.com"}))
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, "test fail status")
+        verify(views, times=0).send_email_to_user(any(), any(), any())
+
+    def test_post_success(self):
+        ''' 200 returned, send email invoked when user service succeeds '''
+        self.result["user"] = User.objects.get(username="admin")
+        self.result["conf"] = UserConfirmation(confirmation_key="testing123")
+        response = self.client.post("/mfserver2/reset_password_request/",
+                                    content_type='application/json',
+                                    data=json.dumps({"email": "test@test.com"}))
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Emailed password reset link", response.content)
+        verify(views, times=1).send_email_to_user(any(), any(), any())

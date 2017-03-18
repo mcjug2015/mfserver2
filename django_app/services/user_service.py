@@ -46,10 +46,7 @@ def create_user_and_conf(email, username, password):
         return user_dict
     user.set_password(password)
     user.save()
-    user_confirmation = UserConfirmation(user=user, conf_type="registration")
-    user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
-    user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
-                                                  for i in range(0, 64)])  # pylint: disable=unused-variable
+    user_confirmation = create_conf(user=user, conf_type="registration")
     user_confirmation.save()
     user_dict["conf"] = user_confirmation
     return user_dict
@@ -74,3 +71,30 @@ def complete_user_registration(conf_str):
     retval["status"] = "Successfully completed registration for %s" % conf.user.username
     retval["code"] = 200
     return retval
+
+
+def request_password_reset(username):
+    ''' generate a conf if user is eligible to reset password '''
+    retval = {"conf": None, "user": None, "status": "invalid username %s" % username}
+    user = User.objects.filter(username=username)
+    if user.count() == 0:
+        return retval
+    user = user[0:1][0]
+    if not user.is_active:
+        retval["status"] = "Inactive user %s ineligible to reset password" % username
+        return retval
+    user_confirmation = create_conf(user=user, conf_type="password_reset")
+    user_confirmation.save()
+    retval["conf"] = user_confirmation
+    retval["user"] = user
+    retval["status"] = "successful password reset request for %s" % username
+    return retval
+
+
+def create_conf(user, conf_type):
+    ''' create a user confirmation '''
+    user_confirmation = UserConfirmation(user=user, conf_type=conf_type)
+    user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
+    user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
+                                                  for i in range(0, 64)])  # pylint: disable=unused-variable
+    return user_confirmation

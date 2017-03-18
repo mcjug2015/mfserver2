@@ -101,3 +101,30 @@ class CompleteUserRegistration(TestCase):
         result = user_service.complete_user_registration("right")
         self.assertIn("Successfully completed registration for", result["status"])
         self.assertEquals(User.objects.filter(is_active=True).count(), 1)
+
+
+class RequestPasswordResetTests(TestCase):
+    ''' tests for the request_password_reset method '''
+
+    def test_no_such_user(self):
+        ''' appropriate status returned when no user exists '''
+        retval = user_service.request_password_reset("i do not exist")
+        self.assertIsNone(retval["conf"])
+        self.assertIn("invalid username", retval["status"])
+
+    def test_inactive_user(self):
+        ''' no reset for inactive user '''
+        user = User.objects.get(username="admin")
+        user.is_active = False
+        user.save()
+        retval = user_service.request_password_reset("admin")
+        self.assertIsNone(retval["conf"])
+        self.assertIn("Inactive user", retval["status"])
+
+    def test_success(self):
+        ''' existing, active user able to get reset password conf '''
+        retval = user_service.request_password_reset("admin")
+        self.assertEquals(retval["conf"].user.username, "admin")
+        self.assertEquals(User.objects.get(username="admin").confirmations.all()[0:1][0].conf_type,
+                          "password_reset")
+        self.assertIn("successful password reset", retval["status"])

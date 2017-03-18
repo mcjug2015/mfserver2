@@ -3,10 +3,10 @@
 from tastypie.api import Api
 from django.conf.urls import include, url
 from django.contrib.auth.decorators import login_required
-from django_app.views import IndexView, login_async, logout_async,\
-    RegisterUserView, ChangePasswordView
-from django_app.api import MeetingResource, MeetingTypeResource, UserResource,\
-    SaveMeetingResource
+from django_app.views import (IndexView, login_async, logout_async,
+                              RegisterUserView, ChangePasswordView, RequestResetPassword)
+from django_app.api import (MeetingResource, MeetingTypeResource, UserResource,
+                            SaveMeetingResource)
 
 
 API_V1 = Api(api_name='v1')
@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^login_async/', login_async),
     url(r'^logout_async/', logout_async),
     url(r'^register/', RegisterUserView.as_view()),
+    url(r'^reset_password_request/', RequestResetPassword.as_view()),
     url(r'^change_password/', login_required(ChangePasswordView.as_view())),
 ]
