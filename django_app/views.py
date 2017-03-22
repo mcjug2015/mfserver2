@@ -4,7 +4,8 @@ import json
 import logging
 import django.core.mail as django_mail
 from django.contrib.auth import authenticate, login, logout
-from django.http.response import JsonResponse, HttpResponse
+from django.http.response import JsonResponse, HttpResponse,\
+    HttpResponseForbidden
 from django.shortcuts import render
 from django.views import View
 from django_app.services import user_service
@@ -94,10 +95,12 @@ class RequestResetPassword(View):
     def get(self, request):
         ''' show user the form to reset password '''
         conf_key = request.GET.get('confirmation', None)
-        reset_conf = UserConfirmation.objects.get(confirmation_key=conf_key,
-                                                  conf_type="password_reset")
+        conf, response = get_conf_and_response(conf_key, "password_reset")
+        if response:
+            response.content = "Invalid password reset link"
+            return response
         return render(request, 'user/reset_password.html',
-                      context={"reset_conf": reset_conf})
+                      context={"reset_conf": conf})
 
     def post(self, request):
         ''' generate reset conf for user and send email with reset link '''
@@ -113,6 +116,50 @@ class RequestResetPassword(View):
                                 content="Emailed password reset link to user %s " % email)
         LOGGER.error("Failed reset password for user %s, reason: %s", email, result["status"])
         return HttpResponse(status=400, content=result["status"])
+
+
+class ResetPassword(View):
+    ''' view for resetting the password with user conf '''
+
+    def post(self, request):
+        '''
+            if password and retype password match, reset it,
+            else return page with validation error
+        '''
+        conf_key = request.POST.get("reset_conf", None)
+        conf, response = get_conf_and_response(conf_key, "password_reset")
+        if response:
+            response.content = "Invalid password reset link"
+            return response
+        errors_list = []
+        password = request.POST.get("password", None)
+        retype_password = request.POST.get("retype_password", None)
+        if password != retype_password:
+            errors_list.append("Passwords did not match")
+        if len(password) < 6:
+            errors_list.append("Password must be longer than 6 characters")
+        if errors_list:
+            return render(request, 'user/reset_password.html',
+                          context={"errors_list": errors_list,
+                                   "reset_conf": conf})
+        result = user_service.reset_password(conf, password)
+        if "Successfully" in result:
+            status = 200
+        else:
+            status = 400
+        return HttpResponse(status=status, content=result)
+
+
+def get_conf_and_response(conf_str, conf_type):
+    '''
+        get (confirmation, response) if there is no confirmation for provided input
+        reponse will be non-none
+    '''
+    reset_conf = UserConfirmation.objects.filter(confirmation_key=conf_str,
+                                                 conf_type=conf_type)
+    if reset_conf.count() == 0:
+        return None, HttpResponseForbidden()
+    return reset_conf[0:1][0], None
 
 
 def send_email_to_user(user, subject_text, message_text):

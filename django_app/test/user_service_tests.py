@@ -128,3 +128,31 @@ class RequestPasswordResetTests(TestCase):
         self.assertEquals(User.objects.get(username="admin").confirmations.all()[0:1][0].conf_type,
                           "password_reset")
         self.assertIn("successful password reset", retval["status"])
+
+
+class ResetPasswordTests(TestCase):
+    ''' tests for the reset password method '''
+
+    def test_is_confirmed(self):
+        ''' error message if conf has already been confirmed '''
+        retval = user_service.reset_password(UserConfirmation(is_confirmed=True), "irrelevant")
+        self.assertIn("has already been used", retval)
+
+    def test_expired(self):
+        ''' error message returned if conf is expired '''
+        expiration_date = timezone.now() - datetime.timedelta(days=5)
+        retval = user_service.reset_password(UserConfirmation(expiration_date=expiration_date),
+                                             "irrelevant")
+        self.assertIn("clicked expired on", retval)
+
+    def test_success(self):
+        ''' test successfully resetting password '''
+        user = User.objects.get(username="admin")
+        user_confirmation = UserConfirmation(user=user, conf_type="reset_password")
+        user_confirmation.confirmation_key = "right"
+        user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
+        user_confirmation.save()
+        retval = user_service.reset_password(user_confirmation, "test_password123")
+        self.assertIn("Successfully changed password", retval)
+        self.assertTrue(user_confirmation.is_confirmed)
+        self.assertTrue(User.objects.get(username="admin").check_password("test_password123"))

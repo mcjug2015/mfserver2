@@ -189,7 +189,13 @@ class RequestResetPasswordTests(TestCase):
         ''' tear down test '''
         unstub()
 
-    def test_get(self):
+    def test_get_fail(self):
+        ''' http forbidden if conf with given key not found '''
+        response = self.client.get("/mfserver2/reset_password_request/",
+                                   {"confirmation": "i_do_not_exist"})
+        self.assertEquals(response.status_code, 403)
+
+    def test_get_success(self):
         ''' make sure view with username name confirmation key gets returned on get '''
         user = User.objects.get(username="admin")
         user_conf = UserConfirmation(confirmation_key="testing456", user=user,
@@ -201,6 +207,8 @@ class RequestResetPasswordTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertIn("Reset password for admin", response.content)
         self.assertIn("testing456", response.content)
+        self.assertNotIn("Passwords did not match", response.content)
+        self.assertNotIn("Password must be longer than 6 characters", response.content)
 
     def test_post_fail(self):
         ''' 400 returned when user service does not create conf '''
@@ -223,3 +231,54 @@ class RequestResetPasswordTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertIn("Emailed password reset link", response.content)
         verify(views, times=1).send_email_to_user(any(), any(), any())
+
+
+class ResetPasswordTests(TestCase):
+    ''' tests for the reset password view '''
+
+    def setUp(self):
+        ''' set up test '''
+        self.user = User.objects.get(username="admin")
+        UserConfirmation(confirmation_key="testing456", user=self.user,
+                         conf_type="password_reset",
+                         expiration_date=timezone.now()).save()
+
+    def tearDown(self):
+        ''' tear down test '''
+        unstub()
+
+    def test_no_such_conf(self):
+        ''' http forbidden if conf not found '''
+        response = self.client.post("/mfserver2/reset_password/",
+                                    data={"reset_conf": "i_do_not_exist"})
+        self.assertEquals(response.status_code, 403)
+
+    def test_invalid_password(self):
+        ''' page with error message when passwords not matching or less than 6 characters '''
+        response = self.client.post("/mfserver2/reset_password/",
+                                    data={"reset_conf": "testing456",
+                                          "password": "abc",
+                                          "retype_password": "123"})
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Passwords did not match", response.content)
+        self.assertIn("Password must be longer than 6 characters", response.content)
+
+    def test_fail_service(self):
+        ''' service failing causes http 400 '''
+        when(views.user_service).reset_password(any(), any()).thenReturn("fail")
+        response = self.client.post("/mfserver2/reset_password/",
+                                    data={"reset_conf": "testing456",
+                                          "password": "abc123",
+                                          "retype_password": "abc123"})
+        self.assertEquals(response.status_code, 400)
+        self.assertIn("fail", response.content)
+
+    def test_success(self):
+        ''' service success causes http 200 '''
+        when(views.user_service).reset_password(any(), any()).thenReturn("Successfully")
+        response = self.client.post("/mfserver2/reset_password/",
+                                    data={"reset_conf": "testing456",
+                                          "password": "abc123",
+                                          "retype_password": "abc123"})
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Successfully", response.content)

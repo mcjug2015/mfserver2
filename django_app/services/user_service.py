@@ -91,6 +91,20 @@ def request_password_reset(username):
     return retval
 
 
+def reset_password(conf, password):
+    ''' reset password or error out '''
+    if conf.is_confirmed:
+        return "The password reset link you clicked has already been used and can not be used again."
+    if conf.expiration_date < timezone.now():
+        return "The password reset link you clicked expired on %s and can not be used" % conf.expiration_date
+    conf.user.set_password(password)
+    conf.user.save()
+    conf.is_confirmed = True
+    conf.confirmation_date = timezone.now()
+    conf.save()
+    return "Successfully changed password for user %s" % conf.user.username
+
+
 def create_conf(user, conf_type):
     ''' create a user confirmation '''
     user_confirmation = UserConfirmation(user=user, conf_type=conf_type)
