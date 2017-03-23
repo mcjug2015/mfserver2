@@ -7,6 +7,7 @@ from mockito.mockito import unstub, when, verify
 from mockito.matchers import any  # pylint: disable=redefined-builtin
 from django_app.models import UserConfirmation
 from django_app import views
+from bs4 import BeautifulSoup
 
 
 class TestUserCreation(TestCase):
@@ -62,3 +63,28 @@ class TestUserCreation(TestCase):
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['meta']['total_count'], 1)
+
+
+class PasswordResetTest(TestCase):
+    ''' test the entire password reset process '''
+
+    def test_reset(self):
+        ''' entire reset process works '''
+        response = self.client.post("/mfserver2/reset_password_request/",
+                                    content_type='application/json',
+                                    data=json.dumps({"email": "admin"}))
+        self.assertEquals(response.status_code, 200)
+        conf = UserConfirmation.objects.get(user__username='admin')
+        response = self.client.get("/mfserver2/reset_password_request/",
+                                   {"confirmation": conf.confirmation_key})
+        self.assertEquals(response.status_code, 200)
+        conf_str = BeautifulSoup(response.content,
+                                 'html.parser').find_all('input')[2].attrs['value']
+        response = self.client.post("/mfserver2/reset_password/",
+                                    data={"reset_conf": conf_str,
+                                          "password": "abc123",
+                                          "retype_password": "abc123"})
+        self.assertEquals(response.status_code, 200)
+        self.client.login(username='admin', password='abc123')
+        response = self.client.get('/admin/')
+        self.assertEquals(response.status_code, 200)
