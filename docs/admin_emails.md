@@ -19,7 +19,7 @@ email.send()
 KABOOM
 ```
 
-This will fail and you'll get an email. click it and tell google the attempt is legit. doing the same thing after the should succeed
+This will fail and you'll get an email, the email may take 5-10 minutes to arrive. click it and tell google the attempt is legit. doing the same thing after the should succeed
 ```
 cd /opt/mfserver2/code/
 python manage.py shell

@@ -1,6 +1,6 @@
 # registering users with curl
 
-This assumes that the mfserver2 you're pointing at has been set up to send emails. Refer to docs/authenticated_requests.md if you don't know where to get the tokens from.
+This assumes that the mfserver2 you're pointing at has been set up to send emails as specified in docs/admin_emails.md. Refer to docs/authenticated_requests.md if you don't know where to get the tokens from.
 ```
 curl -f -k -v https://159.203.91.166/mfserver2/welcome/
 curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://159.203.91.166" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"email": "test@test.com", "password": "fake_password"}' https://159.203.91.166/mfserver2/register/
