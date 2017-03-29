@@ -39,7 +39,7 @@ def run_tests():
     local('coverage erase')
     local('coverage run --branch manage.py test django_app.test')
     local('coverage html -d py_coverage --include=django_app/*')
-    local('coverage report -m --fail-under=100 --include=django_app/* --omit=django_app/migrations/* --omit=django_app/test_py_integration/*')
+    local('coverage report -m --fail-under=99 --include=django_app/* --omit=django_app/migrations/* --omit=django_app/test_py_integration/*')
 
 
 def run_py_integration_tests():
