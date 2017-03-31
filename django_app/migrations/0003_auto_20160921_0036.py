@@ -9,12 +9,12 @@ from django.utils import timezone
 
 def forwards_func(apps, schema_editor):
     ''' add an admin user '''
-    user = User(pk=1, username="admin", is_active=True,
+    user = User(pk=1000000, username="mf_admin", is_active=True,
                 is_superuser=True, is_staff=True,
                 last_login=timezone.now(),
-                email="test@test.com",
+                email="mf_test@test.com",
                 date_joined=timezone.now())
-    user.set_password('admin')
+    user.set_password('mf_admin')
     user.save()
 
 

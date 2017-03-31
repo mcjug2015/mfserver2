@@ -23,7 +23,7 @@ cd /opt/mfserver2/code
 source /opt/mfserver2/venv/bin/activate
 fab sudo_refresh_local
 ```
-Now go to https://ip_address/admin/ or https://ip_address/mfserver2/welcome/ and stuff should come up. U/p is admin/admin
+Now go to https://ip_address/admin/ or https://ip_address/mfserver2/welcome/ and stuff should come up. U/p is mf_admin/mf_admin
 
 
 To make csrf and sessionid authenticated requests take a look in docs.authenticated_requests.md or django_app.management.commands.get_csrf_session.py

@@ -9,8 +9,8 @@ class Command(BaseCommand):
     ''' class for the command '''
 
     def add_arguments(self, parser):
-        parser.add_argument('--username', default='admin')
-        parser.add_argument('--password', default='admin')
+        parser.add_argument('--username', default='mf_admin')
+        parser.add_argument('--password', default='mf_admin')
         parser.add_argument('--initial_url', default='http://127.0.0.1:8000/mfserver2/welcome/')
         parser.add_argument('--login_url', default='http://127.0.0.1:8000/mfserver2/login_async/')
 

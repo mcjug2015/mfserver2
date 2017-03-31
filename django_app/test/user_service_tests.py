@@ -15,27 +15,27 @@ class GetUserToRegisterTests(TestCase):
 
     def test_existing_user_fail(self):
         ''' make sure existing user with and without confs is not elligible to register '''
-        result = user_service.get_user_to_register("test@test.com", "admin")
+        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
         self.assertIsNone(result["user"])
 
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
-        result = user_service.get_user_to_register("test@test.com", "admin")
+        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
         self.assertIsNone(result["user"])
 
     def test_existing_user_success(self):
         ''' make sure existing user with unconfirmed, expired conf can register '''
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user.is_active = False
         user.save()
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() - datetime.timedelta(days=50)
         user_confirmation.save()
-        result = user_service.get_user_to_register("test@test.com", "admin")
+        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
         self.assertIn("inactive user", result["status"])
-        self.assertEquals(result["user"].email, "test@test.com")
+        self.assertEquals(result["user"].email, "mf_test@test.com")
 
     def test_new_user(self):
         ''' test getting a new user back '''
@@ -93,7 +93,7 @@ class CompleteUserRegistration(TestCase):
 
     def test_success(self):
         ''' test successfull registration completion '''
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.confirmation_key = "right"
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
@@ -114,18 +114,18 @@ class RequestPasswordResetTests(TestCase):
 
     def test_inactive_user(self):
         ''' no reset for inactive user '''
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user.is_active = False
         user.save()
-        retval = user_service.request_password_reset("admin")
+        retval = user_service.request_password_reset("mf_admin")
         self.assertIsNone(retval["conf"])
         self.assertIn("Inactive user", retval["status"])
 
     def test_success(self):
         ''' existing, active user able to get reset password conf '''
-        retval = user_service.request_password_reset("admin")
-        self.assertEquals(retval["conf"].user.username, "admin")
-        self.assertEquals(User.objects.get(username="admin").confirmations.all()[0:1][0].conf_type,
+        retval = user_service.request_password_reset("mf_admin")
+        self.assertEquals(retval["conf"].user.username, "mf_admin")
+        self.assertEquals(User.objects.get(username="mf_admin").confirmations.all()[0:1][0].conf_type,
                           "password_reset")
         self.assertIn("successful password reset", retval["status"])
 
@@ -147,7 +147,7 @@ class ResetPasswordTests(TestCase):
 
     def test_success(self):
         ''' test successfully resetting password '''
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user_confirmation = UserConfirmation(user=user, conf_type="reset_password")
         user_confirmation.confirmation_key = "right"
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
@@ -155,4 +155,4 @@ class ResetPasswordTests(TestCase):
         retval = user_service.reset_password(user_confirmation, "test_password123")
         self.assertIn("Successfully changed password", retval)
         self.assertTrue(user_confirmation.is_confirmed)
-        self.assertTrue(User.objects.get(username="admin").check_password("test_password123"))
+        self.assertTrue(User.objects.get(username="mf_admin").check_password("test_password123"))

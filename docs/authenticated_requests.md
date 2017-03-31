@@ -12,7 +12,7 @@ curl -f -k -v https://127.0.0.1/mfserver2/welcome/
 
 send in csrf referer + token + cookie + login creds to get session id
 ```
-curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "admin", "password": "admin"}' https://127.0.0.1/mfserver2/login_async/
+curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: THE_TOKEN" -H "referer: https://127.0.0.1" --cookie "csrftoken=THE_COOKIE"  -X POST -d '{"username": "mf_admin", "password": "mf_admin"}' https://127.0.0.1/mfserver2/login_async/
 ```
 
 send in the token + session id to make authenticated requests
@@ -54,7 +54,7 @@ curl -f -k -v --cookie "csrftoken=THE_TOKEN;sessionid=dnggyjcepbv892w55ag0pyi77q
 ```
 
 ```
-[dtuser@localhost code]$ curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: Ss9C9wEUJ1lgbCJfkPTSOtprmv87xT36ZssFc4OZw8jrPswtacGvA38MxcuuNcx8" --cookie "csrftoken=w5AtKa57z6ZTW1BhhJ1o3zmzsRyOBAUlD5TwNIfcmdX4ARov76O1P95UDyUbRTon"  -X POST -d '{"username": "admin", "password": "admin"}' http://127.0.0.1:8000/mfserver2/login_async/
+[dtuser@localhost code]$ curl -f -k -v -H "Content-Type: application/json" -H "X-CSRFToken: Ss9C9wEUJ1lgbCJfkPTSOtprmv87xT36ZssFc4OZw8jrPswtacGvA38MxcuuNcx8" --cookie "csrftoken=w5AtKa57z6ZTW1BhhJ1o3zmzsRyOBAUlD5TwNIfcmdX4ARov76O1P95UDyUbRTon"  -X POST -d '{"username": "mf_admin", "password": "mf_admin"}' http://127.0.0.1:8000/mfserver2/login_async/
 * About to connect() to 127.0.0.1 port 8000 (#0)
 *   Trying 127.0.0.1...
 * Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
@@ -109,5 +109,5 @@ victors-MacBook-Pro:~ vsemenov$ curl -f -k -v --cookie "csrftoken=VSbkFc6RSaAbnM
 < Strict-Transport-Security: max-age=31536000
 < 
 * Connection #0 to host 138.197.21.211 left intact
-{"date_joined": "2017-02-04T17:23:38.078321", "email": "test@test.com", "first_name": "", "id": 1, "is_active": true, "is_staff": true, "last_login": "2017-02-04T17:30:10.312510", "last_name": "", "resource_uri": "/mfserver2/api/v1/auth/user/1/", "username": "admin"}
+{"date_joined": "2017-02-04T17:23:38.078321", "email": "mf_test@test.com", "first_name": "", "id": 1, "is_active": true, "is_staff": true, "last_login": "2017-02-04T17:30:10.312510", "last_name": "", "resource_uri": "/mfserver2/api/v1/auth/user/1/", "username": "mf_admin"}
 ```

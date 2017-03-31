@@ -33,12 +33,12 @@ class RegisterUserViewTests(TestCase):
 
     def test_post_success(self):
         ''' test successfully registering a user '''
-        self.result["user"] = User.objects.get(username="admin")
+        self.result["user"] = User.objects.get(username="mf_admin")
         self.result["status"] = "test good status"
         self.result["conf"] = UserConfirmation(confirmation_key="testing123")
         response = self.client.post("/mfserver2/register/",
                                     content_type='application/json',
-                                    data=json.dumps({"email": "test@test.com",
+                                    data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
         self.assertEquals(response.status_code, 201)
         verify(views).send_email_to_user(any(), any(), any())
@@ -49,7 +49,7 @@ class RegisterUserViewTests(TestCase):
         self.result["status"] = "test bad status"
         response = self.client.post("/mfserver2/register/",
                                     content_type='application/json',
-                                    data=json.dumps({"email": "test@test.com",
+                                    data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
         self.assertEquals(response.status_code, 400)
         verify(views, times=0).send_email_to_user(any(), any(), any())
@@ -141,7 +141,7 @@ class SendEmailToUserTest(TestCase):
                                           from_email=any(),
                                           recipient_list=any(),
                                           fail_silently=any()).thenReturn(None)
-        views.send_email_to_user(User.objects.get(username="admin"), "a", "b")
+        views.send_email_to_user(User.objects.get(username="mf_admin"), "a", "b")
         verify(views.django_mail).send_mail(subject=any(), message=any(),
                                             from_email=any(),
                                             recipient_list=any(),
@@ -197,7 +197,7 @@ class RequestResetPasswordTests(TestCase):
 
     def test_get_success(self):
         ''' make sure view with username name confirmation key gets returned on get '''
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="mf_admin")
         user_conf = UserConfirmation(confirmation_key="testing456", user=user,
                                      conf_type="password_reset",
                                      expiration_date=timezone.now())
@@ -205,7 +205,7 @@ class RequestResetPasswordTests(TestCase):
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": "testing456"})
         self.assertEquals(response.status_code, 200)
-        self.assertIn("Reset password for admin", response.content)
+        self.assertIn("Reset password for mf_admin", response.content)
         self.assertIn("testing456", response.content)
         self.assertNotIn("Passwords did not match", response.content)
         self.assertNotIn("Password must be longer than 6 characters", response.content)
@@ -216,18 +216,18 @@ class RequestResetPasswordTests(TestCase):
         self.result["status"] = "test fail status"
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
-                                    data=json.dumps({"email": "test@test.com"}))
+                                    data=json.dumps({"email": "mf_test@test.com"}))
         self.assertEquals(response.status_code, 400)
         self.assertEquals(response.content, "test fail status")
         verify(views, times=0).send_email_to_user(any(), any(), any())
 
     def test_post_success(self):
         ''' 200 returned, send email invoked when user service succeeds '''
-        self.result["user"] = User.objects.get(username="admin")
+        self.result["user"] = User.objects.get(username="mf_admin")
         self.result["conf"] = UserConfirmation(confirmation_key="testing123")
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
-                                    data=json.dumps({"email": "test@test.com"}))
+                                    data=json.dumps({"email": "mf_test@test.com"}))
         self.assertEquals(response.status_code, 200)
         self.assertIn("Emailed password reset link", response.content)
         verify(views, times=1).send_email_to_user(any(), any(), any())
@@ -238,7 +238,7 @@ class ResetPasswordTests(TestCase):
 
     def setUp(self):
         ''' set up test '''
-        self.user = User.objects.get(username="admin")
+        self.user = User.objects.get(username="mf_admin")
         UserConfirmation(confirmation_key="testing456", user=self.user,
                          conf_type="password_reset",
                          expiration_date=timezone.now()).save()

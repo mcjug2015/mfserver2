@@ -72,9 +72,9 @@ class PasswordResetTest(TestCase):
         ''' entire reset process works '''
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
-                                    data=json.dumps({"email": "admin"}))
+                                    data=json.dumps({"email": "mf_admin"}))
         self.assertEquals(response.status_code, 200)
-        conf = UserConfirmation.objects.get(user__username='admin')
+        conf = UserConfirmation.objects.get(user__username='mf_admin')
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": conf.confirmation_key})
         self.assertEquals(response.status_code, 200)
@@ -85,6 +85,6 @@ class PasswordResetTest(TestCase):
                                           "password": "abc123",
                                           "retype_password": "abc123"})
         self.assertEquals(response.status_code, 200)
-        self.client.login(username='admin', password='abc123')
+        self.client.login(username='mf_admin', password='abc123')
         response = self.client.get('/admin/')
         self.assertEquals(response.status_code, 200)
