@@ -29,27 +29,42 @@ class ConverterDriver(object):
             cursor.execute(converter.get_sql())
             old_items = cursor.fetchall()
             for old_item in old_items:
-                converter.convert_one(old_item)
+                converter.collect_id(old_item)
+                converter.collect_item(old_item)
+            converter.get_manager().filter(pk__in=converter.ids).delete()
+            converter.get_manager().bulk_create(converter.new_objs)
 
 
 class MeetingTypeConverter(object):
     ''' grabs old meeting types and loads them into mfserver2 '''
+
+    def __init__(self):
+        self.new_objs = []
+        self.ids = []
 
     @classmethod
     def get_sql(cls):
         ''' return the sql needed to grab old records '''
         return """select id, short_name, name, description from aabuddy_meetingtype"""
 
-    @classmethod
-    def convert_one(cls, old_item):
+    def collect_id(self, old_item):
+        ''' save old item id '''
+        self.ids.append(old_item['id'])
+
+    def collect_item(self, old_item):
         ''' turn single old db entry into corresponding new db entries '''
-        MeetingType.objects.get_or_create(pk=old_item['id'],
-                                          short_name=old_item['short_name'],
-                                          name=old_item['name'],
-                                          description=old_item['description'])
+        self.new_objs.append(MeetingType(pk=old_item['id'],
+                                         short_name=old_item['short_name'],
+                                         name=old_item['name'],
+                                         description=old_item['description']))
+
+    @classmethod
+    def get_manager(cls):
+        ''' get the orm obj manager '''
+        return MeetingType.objects
 
 
-class UserConverter(object):
+class UserConverter(MeetingTypeConverter):
     ''' converts old users to new ones '''
 
     @classmethod
@@ -59,17 +74,21 @@ class UserConverter(object):
                   email, is_staff, is_active, date_joined
                   from auth_user"""
 
-    @classmethod
-    def convert_one(cls, old_item):
+    def collect_item(self, old_item):
         ''' turn single old db entry into corresponding new db entries '''
-        User.objects.get_or_create(pk=old_item['id'],
-                                   password=old_item['password'],
-                                   last_login=old_item['last_login'],
-                                   is_superuser=old_item['is_superuser'],
-                                   username=old_item['username'],
-                                   first_name=old_item['first_name'],
-                                   last_name=old_item['last_name'],
-                                   email=old_item['email'],
-                                   is_staff=old_item['is_staff'],
-                                   is_active=old_item['is_active'],
-                                   date_joined=old_item['date_joined'])
+        self.new_objs.append(User(pk=old_item['id'],
+                                  password=old_item['password'],
+                                  last_login=old_item['last_login'],
+                                  is_superuser=old_item['is_superuser'],
+                                  username=old_item['username'],
+                                  first_name=old_item['first_name'],
+                                  last_name=old_item['last_name'],
+                                  email=old_item['email'],
+                                  is_staff=old_item['is_staff'],
+                                  is_active=old_item['is_active'],
+                                  date_joined=old_item['date_joined']))
+
+    @classmethod
+    def get_manager(cls):
+        ''' get the orm obj manager '''
+        return User.objects
