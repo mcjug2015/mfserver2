@@ -1,8 +1,9 @@
 ''' uses old aabuddy db to safely fill mfserver2 db '''
 # pylint: disable=no-member,too-few-public-methods
 import psycopg2
-from django_app.models import MeetingType
 from django.contrib.auth.models import User
+from django.contrib.gis.geos.geometry import GEOSGeometry
+from django_app.models import MeetingType, Meeting
 
 
 def get_conn(db_host="127.0.0.1", db_port="5432", db_username="mfserver2",
@@ -32,7 +33,8 @@ class ConverterDriver(object):
                 converter.collect_id(old_item)
                 converter.collect_item(old_item)
             converter.get_manager().filter(pk__in=converter.ids).delete()
-            converter.get_manager().bulk_create(converter.new_objs)
+            converter.get_manager().bulk_create(converter.new_objs,
+                                                batch_size=10000)
 
 
 class MeetingTypeConverter(object):
@@ -92,3 +94,34 @@ class UserConverter(MeetingTypeConverter):
     def get_manager(cls):
         ''' get the orm obj manager '''
         return User.objects
+
+
+class MeetingConverter(MeetingTypeConverter):
+    ''' turn old aabuddy meetings into mfserver2 meetings '''
+
+    @classmethod
+    def get_sql(cls):
+        ''' return the sql needed to grab old records '''
+        return """select id, day_of_week, start_time, end_time, name, description, address,
+                  ST_AsText (geo_location), creator_id, created_date
+                  from aabuddy_meeting limit 15"""
+
+    def collect_item(self, old_item):
+        ''' turn single old db entry into corresponding new db entries '''
+        meeting = Meeting()
+        meeting.pk = old_item['id']
+        meeting.day_of_week = old_item['day_of_week']
+        meeting.start_time = old_item['start_time']
+        meeting.end_time = old_item['end_time']
+        meeting.name = old_item['name']
+        meeting.description = old_item['description']
+        meeting.creator_id = old_item['creator_id']
+        meeting.address = old_item['address']
+        meeting.created_date = old_item['created_date']
+        meeting.geo_location = GEOSGeometry(old_item['st_astext'], srid=4326)
+        self.new_objs.append(meeting)
+
+    @classmethod
+    def get_manager(cls):
+        ''' get the orm obj manager '''
+        return Meeting.objects

@@ -44,11 +44,11 @@ class ConverterDriverTests(TestCase):
         when(test_converter).collect_item(any()).thenReturn(None)
         when(test_converter).get_manager().thenReturn(manager)
         when(manager).filter(pk__in=any()).thenReturn(result_set)
-        when(manager).bulk_create(any()).thenReturn(None)
+        when(manager).bulk_create(any(), batch_size=any()).thenReturn(None)
         when(result_set).delete().thenReturn(None)
         converter.ConverterDriver([test_converter]).run()
         verify(test_converter).collect_item(any())
-        verify(manager).bulk_create(any())
+        verify(manager).bulk_create(any(), batch_size=any())
 
 
 class MeetingTypeConverterTests(TestCase):
@@ -86,7 +86,7 @@ class MeetingTypeConverterTests(TestCase):
 
 
 class UserConverterTests(TestCase):
-    ''' test the meetingtype converter '''
+    ''' test the user converter '''
 
     def setUp(self):
         ''' set up the test '''
@@ -117,3 +117,36 @@ class UserConverterTests(TestCase):
     def test_get_manager(self):
         ''' manage is meetingtype manager '''
         self.assertEquals(self.converter.get_manager().model.__name__, 'User')
+
+
+class MeetingConverterTests(TestCase):
+    ''' test the meeting converter '''
+
+    def setUp(self):
+        ''' set up the test '''
+        self.converter = converter.MeetingConverter()
+
+    def test_get_sql(self):
+        ''' make sure the right sql is returned '''
+        self.assertIn("from aabuddy_meeting",
+                      converter.MeetingConverter.get_sql())
+
+    def test_get_manager(self):
+        ''' manage is meetingtype manager '''
+        self.assertEquals(self.converter.get_manager().model.__name__, 'Meeting')
+
+    def test_convert_one(self):
+        ''' make sure convert one creates expected meeting type entry in mfserver2 db '''
+        old_item = {"id": "500000",
+                    "day_of_week": "1",
+                    "start_time": "19:00:00",
+                    "end_time": "20:00:00",
+                    "name": "mooo",
+                    "description": "mooo",
+                    "creator_id": "1",
+                    "address": "mooo",
+                    "created_date": "2013-12-21 12:40:38.334359-05",
+                    "st_astext": "POINT(-121.2717698 38.1397487)"}
+        self.assertEquals(len(self.converter.new_objs), 0)
+        self.converter.collect_item(old_item)
+        self.assertEquals(len(self.converter.new_objs), 1)

@@ -8,4 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         converter.ConverterDriver([converter.MeetingTypeConverter(),
-                                   converter.UserConverter()]).run()
+                                   converter.UserConverter(),
+                                   converter.MeetingConverter()]).run()
