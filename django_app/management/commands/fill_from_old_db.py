@@ -9,4 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         converter.ConverterDriver([converter.MeetingTypeConverter(),
                                    converter.UserConverter(),
-                                   converter.MeetingConverter()]).run()
+                                   converter.MeetingConverter(),
+                                   converter.MeetingToTypeConverter()]).run()

@@ -150,3 +150,29 @@ class MeetingConverterTests(TestCase):
         self.assertEquals(len(self.converter.new_objs), 0)
         self.converter.collect_item(old_item)
         self.assertEquals(len(self.converter.new_objs), 1)
+
+
+class MeetingToTypeConverterTests(TestCase):
+    ''' test the meeting to type converter '''
+
+    def setUp(self):
+        ''' set up the test '''
+        self.converter = converter.MeetingToTypeConverter()
+
+    def test_get_sql(self):
+        ''' make sure the right sql is returned '''
+        self.assertIn("from aabuddy_meeting_types",
+                      converter.MeetingToTypeConverter.get_sql())
+
+    def test_get_manager(self):
+        ''' manage is meetingtype manager '''
+        self.assertEquals(self.converter.get_manager().model.__name__, 'Meeting_types')
+
+    def test_convert_one(self):
+        ''' make sure convert one creates expected meeting type entry in mfserver2 db '''
+        old_item = {"id": "500000",
+                    "meeting_id": "1",
+                    "meetingtype_id": "1"}
+        self.assertEquals(len(self.converter.new_objs), 0)
+        self.converter.collect_item(old_item)
+        self.assertEquals(len(self.converter.new_objs), 1)

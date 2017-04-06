@@ -104,7 +104,7 @@ class MeetingConverter(MeetingTypeConverter):
         ''' return the sql needed to grab old records '''
         return """select id, day_of_week, start_time, end_time, name, description, address,
                   ST_AsText (geo_location), creator_id, created_date
-                  from aabuddy_meeting limit 15"""
+                  from aabuddy_meeting"""
 
     def collect_item(self, old_item):
         ''' turn single old db entry into corresponding new db entries '''
@@ -125,3 +125,26 @@ class MeetingConverter(MeetingTypeConverter):
     def get_manager(cls):
         ''' get the orm obj manager '''
         return Meeting.objects
+
+
+class MeetingToTypeConverter(MeetingTypeConverter):
+    ''' convert the through table between meetings and meeting types '''
+
+    @classmethod
+    def get_sql(cls):
+        ''' return the sql needed to grab old records '''
+        return """select id, meeting_id, meetingtype_id
+                  from aabuddy_meeting_types"""
+
+    def collect_item(self, old_item):
+        ''' turn single old db entry into corresponding new db entries '''
+        link = Meeting.types.through()
+        link.pk = old_item['id']
+        link.meeting_id = old_item['meeting_id']
+        link.meetingtype_id = old_item['meetingtype_id']
+        self.new_objs.append(link)
+
+    @classmethod
+    def get_manager(cls):
+        ''' get the orm obj manager '''
+        return Meeting.types.through.objects
