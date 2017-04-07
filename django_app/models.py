@@ -16,6 +16,10 @@ class UserConfirmation(models.Model):
     confirmation_date = models.DateTimeField(null=True, blank=True)
     conf_type = models.CharField(max_length=64, null=False, blank=False, default="registration")
 
+    def __str__(self):
+        return "%s %s(%s)" % (str(self.expiration_date)[0:16], self.conf_type,
+                              self.user.username)
+
 
 class CigarShop(models.Model):
     ''' Model class for a cigar shop, has owner and location '''
@@ -30,6 +34,9 @@ class MeetingType(models.Model):
     short_name = models.CharField(null=False, blank=False, max_length=250)
     name = models.CharField(null=False, blank=False, max_length=250)
     description = models.CharField(null=False, blank=False, max_length=250)
+
+    def __str__(self):
+        return "%s(%s)" % (self.short_name, self.name)
 
 
 class Meeting(models.Model):
@@ -56,3 +63,6 @@ class Meeting(models.Model):
     geo_location = models.PointField()
     types = models.ManyToManyField(MeetingType, related_name='meetings', blank=True)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "%s(%s)" % (self.name, self.creator.username)
