@@ -13,6 +13,13 @@ log_folder: /var/log/mfserver2
 sock_folder: /var/run/mfserver2
 
 
+{% set the_ip = 'localhost' %}
+{% if grains['ipv4'] and grains['ipv4'][0] %}
+    {% set the_ip = grains['ipv4'][0] %}
+{% endif %}
+ip_hostname: {{the_ip}}
+
+
 db_name: mfserver2
 
 

@@ -25,7 +25,10 @@ SECRET_KEY = '#h!i8uo+@jj=6r)*x603@2-7jlu85oq9-o$nhbu2so_@&0e4k6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# BEGIN SALT ALLOWED HOSTS(current used if not provisioned by salt)
 ALLOWED_HOSTS = ['127.0.0.1']
+# END SALT ALLOWED HOSTS
 
 
 # Application definition

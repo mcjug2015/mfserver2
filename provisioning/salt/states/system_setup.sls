@@ -15,7 +15,7 @@ do_cert:
     - name: tls.create_self_signed_cert
     - require:
       - pip: py-packages
-    - CN: "localhost"
+    - CN: {{pillar['ip_hostname']}}
     - ST: "MD"
     - L: "Rockville"
     - O: "MCJUG"
