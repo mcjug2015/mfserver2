@@ -9,7 +9,11 @@ git clone https://github.com/mcjug2015/mfserver2.git /tmp/mfserver2
 sh /tmp/mfserver2/provisioning/misc/do_salt.sh
 ```
 
-If ip address is different from 127.0.0.1 switch to reg_user and go to /opt/mfserver2/code/django_proj/settings.py and add ip to ALLOWED_HOSTS at line 28(it'll look something like this ALLOWED_HOSTS = ['127.0.0.1', '192.168.2.5']). After that do:
+If you did this locally, or in a digital ocean host you should be good to go. 
+
+
+
+If your host is not local or on DO, there is a chance that the salt script grabbed the wrong ip and used it to generate the ssl keys and put it into ALLOWED_HOSTS in settings.py. To make sure the cert ip address is right take a look at the ssl parts of /opt/mfserver2/code/conf/nginx/mfserver2.conf and the files it points at. For the settings.py issue su to reg_user and go to /opt/mfserver2/code/django_proj/settings.py and add ip to ALLOWED_HOSTS at line 28(it'll look something like this ALLOWED_HOSTS = ['127.0.0.1', '192.168.2.5']). Once that is fixed do:
 ```
 su - reg_user
 cd /opt/mfserver2/code
