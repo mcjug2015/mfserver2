@@ -14,8 +14,8 @@ sock_folder: /var/run/mfserver2
 
 
 {% set the_ip = 'localhost' %}
-{% if grains['ipv4'] and grains['ipv4'][0] %}
-    {% set the_ip = grains['ipv4'][0] %}
+{% if 'ip_interfaces' in grains and 'eth0' in grains['ip_interfaces'] and grains['ip_interfaces']['eth0'] and grains['ip_interfaces']['eth0'][0] %}
+    {% set the_ip = grains['ip_interfaces']['eth0'][0] %}
 {% endif %}
 ip_hostname: {{the_ip}}
 
