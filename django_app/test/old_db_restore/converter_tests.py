@@ -16,9 +16,11 @@ class GetConnTests(TestCase):
 
     def test_success(self):
         ''' test getting the mocked connection '''
-        when(converter.psycopg2).connect(any()).thenReturn("test123")
-        retval = converter.get_conn()
-        self.assertEquals(retval, "test123")
+        connection = mock()
+        when(converter.psycopg2).connect(any()).thenReturn(connection)
+        when(connection).set_client_encoding(any()).thenReturn(None)
+        converter.get_conn()
+        verify(connection).set_client_encoding(any())
 
 
 class ConverterDriverTests(TestCase):
