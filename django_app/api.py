@@ -82,7 +82,7 @@ class MeetingResource(ExceptionThrowingModelResource):
         semi_filtered = super(MeetingResource, self).apply_filters(request, applicable_filters)
         return semi_filtered.filter(custom) if custom else semi_filtered
 
-    def apply_sorting(self, objects, options=None):
+    def apply_sorting(self, objects, options=None):  # pylint: disable=arguments-differ
         if options and 'lat' in options and 'long' in options and 'distance' in options and\
                 'order_by' in options and options['order_by'] == 'distance':
             pnt = fromstr('POINT(%s %s)' % (options['long'], options['lat']), srid=4326)

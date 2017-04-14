@@ -73,7 +73,7 @@ class MapMeetingAdmin(admin.GeoModelAdmin):
 class MeetingAdmin(MapMeetingAdmin):
     ''' admin for meetings that shows lat/long fields'''
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
+    def formfield_for_dbfield(self, db_field, **kwargs):  # pylint:disable=arguments-differ
         ''' show fields instead of map '''
         if db_field.name == 'geo_location':
             return LatLongField()

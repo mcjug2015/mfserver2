@@ -18,6 +18,7 @@ yum-packages:
       - libffi-devel
       - setools-console
       - gcc
+      - gcc-c++
       - libcap-devel
       - net-tools
       - policycoreutils

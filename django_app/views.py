@@ -19,7 +19,7 @@ def login_async(request):
     username = json_in['username']
     password = json_in['password']
     user = authenticate(username=username, password=password)
-    if user is not None:
+    if user is not None:  # pylint:disable=no-else-return
         login(request, user)
         return JsonResponse(status=200, data={'status': 'good to go',
                                               'status_code': 200})
