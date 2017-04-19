@@ -1,7 +1,7 @@
 '''
     fab file with commands to restore old db dump
     invoke from project root with something like:
-    fab -fdjango_app/old_db_restore/fab_restore.py restore:"/home/dtuser/git/mfserver2/aabuddy_mfserver2_dump.txt"
+    fab -fdjango_app/old_db_restore/fab_restore.py restore:"/opt/mfserver2/code/aabuddy_mfserver2_dump.txt"
 '''
 # pylint: disable=not-context-manager
 from fabric.api import local, shell_env, hide
