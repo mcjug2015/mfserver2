@@ -2,7 +2,8 @@
 from django.test.testcases import TestCase
 from django.utils.dateparse import parse_datetime
 from django.contrib.auth.models import User
-from django_app.models import MeetingType, UserConfirmation, Meeting
+from django_app.models import MeetingType, UserConfirmation, Meeting,\
+    MeetingNotThere
 
 
 class StrReprTests(TestCase):
@@ -19,3 +20,5 @@ class StrReprTests(TestCase):
         self.assertEquals(str(MeetingType(name="qq", short_name="q")), "q(qq)")
         meeting = Meeting(name="a", creator=user)
         self.assertEquals(str(meeting), "a(test user)")
+        not_there = MeetingNotThere(pk=7, request_host="7")
+        self.assertEquals(str(not_there), "7, host: 7")

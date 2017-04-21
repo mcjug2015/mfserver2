@@ -66,3 +66,17 @@ class Meeting(models.Model):
 
     def __str__(self):
         return "%s(%s)" % (self.name, self.creator.username)
+
+
+class MeetingNotThere(models.Model):
+    ''' the meeting not there model '''
+    meeting = models.ForeignKey(Meeting, related_name='not_theres', null=False, blank=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='not_theres', null=True, blank=True, on_delete=models.SET_NULL)
+    note = models.CharField(max_length=200, null=True, blank=True)
+    request_host = models.CharField(max_length=200, null=True, blank=True)
+    user_agent = models.CharField(max_length=400, null=True, blank=True)
+    unique_phone_id = models.CharField(max_length=400, null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "%s, host: %s" % (str(self.pk), str(self.request_host))
