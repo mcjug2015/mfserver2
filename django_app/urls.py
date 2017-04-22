@@ -7,7 +7,7 @@ from django_app.views import (IndexView, login_async, logout_async,
                               RegisterUserView, ChangePasswordView, RequestResetPassword,
                               ResetPassword)
 from django_app.api import (MeetingResource, MeetingTypeResource, UserResource,
-                            SaveMeetingResource)
+                            SaveMeetingResource, MeetingNotThereResource)
 
 
 API_V1 = Api(api_name='v1')
@@ -15,6 +15,7 @@ API_V1.register(UserResource())
 API_V1.register(MeetingTypeResource())
 API_V1.register(MeetingResource())
 API_V1.register(SaveMeetingResource())
+API_V1.register(MeetingNotThereResource())
 
 
 urlpatterns = [

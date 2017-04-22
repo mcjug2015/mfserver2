@@ -4,7 +4,8 @@ import logging
 from tastypie import fields
 from tastypie.contrib.gis.resources import ModelResource
 from tastypie.constants import ALL
-from tastypie.authentication import SessionAuthentication
+from tastypie.authentication import SessionAuthentication, Authentication
+from tastypie.authorization import Authorization
 from tastypie.exceptions import NotFound
 from tastypie.validation import FormValidation, Validation
 from django.db.models import Q
@@ -14,7 +15,7 @@ from django.contrib.gis.measure import D
 from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.contrib.auth.models import User
 from django.contrib.gis.geos.factory import fromstr
-from django_app.models import MeetingType, Meeting
+from django_app.models import MeetingType, Meeting, MeetingNotThere
 from django_app.auth import UserObjectsAuthorization,\
     OwnerObjectsOnlyAuthorization
 from django_app.forms import MeetingForm
@@ -148,3 +149,17 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
         authorization = OwnerObjectsOnlyAuthorization()
         validation = MeetingValidation()
         max_limit = 50
+
+
+class MeetingNotThereResource(ExceptionThrowingModelResource):
+    ''' endpoint for meeting not there '''
+    meeting = fields.ToOneField(MeetingResource, "meeting")
+    user = fields.ToOneField(UserResource, 'creator', null=True)
+
+    class Meta(object):
+        ''' meta info '''
+        allowed_methods = ['get', 'post']
+        queryset = MeetingNotThere.objects.all()
+        resource_name = 'meetingnotthere'
+        authentication = Authentication()
+        authorization = Authorization()

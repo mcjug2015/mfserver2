@@ -63,3 +63,23 @@ class SaveMeetingResourceTest(TestCase):
         self.assertEquals(response.status_code, 200)
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['meta']['total_count'], 3)
+
+
+class MeetingNotThereResourceTests(TestCase):
+    ''' integration tests for meeting not there resource '''
+    fixtures = ['users_groups_perms.json', 'meetings.json']
+
+    def test_meeting_not_there(self):
+        ''' post and get meeting not there '''
+        not_there_obj = {"meeting": "/mfserver2/api/v1/meeting/1/",
+                         "note": "a",
+                         "unique_phone_id": "d"}
+        response = self.client.post('/mfserver2/api/v1/meetingnotthere/',
+                                    json.dumps(not_there_obj),
+                                    content_type='application/json')
+        self.assertEquals(response.status_code, 201)
+        response = self.client.get('/mfserver2/api/v1/meetingnotthere/')
+        self.assertEquals(response.status_code, 200)
+        resp_obj = json.loads(response.content)
+        self.assertEquals(resp_obj['meta']['total_count'], 1)
+        self.assertEquals(resp_obj['objects'][0]['note'], "a")
