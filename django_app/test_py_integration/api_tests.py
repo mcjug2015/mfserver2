@@ -83,3 +83,4 @@ class MeetingNotThereResourceTests(TestCase):
         resp_obj = json.loads(response.content)
         self.assertEquals(resp_obj['meta']['total_count'], 1)
         self.assertEquals(resp_obj['objects'][0]['note'], "a")
+        self.assertEquals(resp_obj['objects'][0]['request_host'], "127.0.0.1")

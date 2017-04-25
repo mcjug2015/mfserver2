@@ -1,14 +1,18 @@
 ''' tests for the api module '''
-# pylint: disable=no-member, protected-access
+# pylint: disable=no-member, redefined-builtin, protected-access
 from django.test.testcases import TestCase
 from django.contrib.gis.geos.factory import fromstr
 from django.contrib.gis.measure import D
 from django.db.models import Q
+from django.contrib.auth.models import User
+from django.http.request import QueryDict
 from tastypie.exceptions import NotFound
 from django_app.api import ExceptionThrowingModelResource, SaveMeetingResource,\
-    MeetingResource, MeetingValidation
-from django_app.models import Meeting
+    MeetingResource, MeetingValidation, MeetingNotThereResource, ModelResource
+from django_app.models import Meeting, MeetingNotThere
 from mockito.mocking import mock
+from mockito.mockito import when, unstub
+from mockito.matchers import any
 
 
 class MeetingTests(TestCase):
@@ -149,3 +153,37 @@ class MeetingValidationTests(TestCase):
     def test_pass_validation(self):
         ''' pass validation '''
         self.assertFalse(self.meeting_validation.is_valid(self.bundle))
+
+
+class MeetingNotThereResourceTests(TestCase):
+    ''' test the meeting not there resource '''
+
+    def setUp(self):
+        ''' set up the test '''
+        self.bundle = mock()
+        self.bundle.obj = MeetingNotThere()
+        self.bundle.request = mock()
+        self.bundle.request.META = QueryDict(mutable=True)
+        self.bundle.request.META.update({"REMOTE_ADDR": "a",
+                                         "HTTP_USER_AGENT": "b"})
+        when(ModelResource).full_hydrate(any()).thenReturn(self.bundle)
+        self.resource = MeetingNotThereResource()
+
+    def tearDown(self):
+        ''' tear down test '''
+        unstub()
+
+    def test_full_hydrate(self):
+        ''' writes the special fields to object '''
+        self.bundle.request.user = User.objects.get(username="mf_admin")
+        retval = self.resource.full_hydrate(self.bundle)
+        self.assertEquals(retval.obj.user.username, "mf_admin")
+
+    def test_full_hydrate_no_user(self):
+        ''' writes special fields with no logged in user '''
+        self.bundle.request.user = mock()
+        when(self.bundle.request.user).is_authenticated().thenReturn(False)
+        retval = self.resource.full_hydrate(self.bundle)
+        self.assertIsNone(retval.obj.user)
+        self.assertEquals(retval.obj.request_host, "a")
+        self.assertEquals(retval.obj.user_agent, "b")

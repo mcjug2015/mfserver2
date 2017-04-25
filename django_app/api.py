@@ -156,6 +156,15 @@ class MeetingNotThereResource(ExceptionThrowingModelResource):
     meeting = fields.ToOneField(MeetingResource, "meeting")
     user = fields.ToOneField(UserResource, 'creator', null=True)
 
+    def full_hydrate(self, bundle):
+        ''' populate the user and user agent '''
+        retval = super(MeetingNotThereResource, self).full_hydrate(bundle)
+        if retval.request.user.is_authenticated():
+            retval.obj.user = retval.request.user
+        retval.obj.request_host = retval.request.META.get('REMOTE_ADDR', "")[:200]
+        retval.obj.user_agent = retval.request.META.get('HTTP_USER_AGENT', "")[:400]
+        return retval
+
     class Meta(object):
         ''' meta info '''
         allowed_methods = ['get', 'post']
