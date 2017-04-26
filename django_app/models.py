@@ -16,9 +16,9 @@ class UserConfirmation(models.Model):
     confirmation_date = models.DateTimeField(null=True, blank=True)
     conf_type = models.CharField(max_length=64, null=False, blank=False, default="registration")
 
-    def __str__(self):
-        return "%s %s(%s)" % (str(self.expiration_date)[0:16], self.conf_type,
-                              self.user.username)
+    def __unicode__(self):
+        return u"%s %s(%s)" % (str(self.expiration_date)[0:16], self.conf_type,
+                               self.user.username)
 
 
 class CigarShop(models.Model):
@@ -35,8 +35,8 @@ class MeetingType(models.Model):
     name = models.CharField(null=False, blank=False, max_length=250)
     description = models.CharField(null=False, blank=False, max_length=250)
 
-    def __str__(self):
-        return "%s(%s)" % (self.short_name, self.name)
+    def __unicode__(self):
+        return u"%s(%s)" % (self.short_name, self.name)
 
 
 class Meeting(models.Model):
@@ -64,8 +64,8 @@ class Meeting(models.Model):
     types = models.ManyToManyField(MeetingType, related_name='meetings', blank=True)
     is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return "%s(%s)" % (self.name, self.creator.username)
+    def __unicode__(self):
+        return u"%s(%s)" % (self.name, self.creator.username)
 
 
 class MeetingNotThere(models.Model):
@@ -76,7 +76,9 @@ class MeetingNotThere(models.Model):
     request_host = models.CharField(max_length=200, null=True, blank=True)
     user_agent = models.CharField(max_length=400, null=True, blank=True)
     unique_phone_id = models.CharField(max_length=400, null=True, blank=True)
+    resolved = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return "%s, host: %s" % (str(self.pk), str(self.request_host))
+    def __unicode__(self):
+        return u"%s, host: %s" % (str(self.pk), str(self.request_host))

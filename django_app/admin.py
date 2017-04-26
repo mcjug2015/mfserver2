@@ -3,7 +3,7 @@
 from django.contrib.gis import admin
 from django import forms
 from django.core import validators
-from django_app.models import Meeting, MeetingType
+from django_app.models import Meeting, MeetingType, MeetingNotThere
 
 
 class LatLongWidget(forms.MultiWidget):
@@ -87,6 +87,17 @@ class MapMeeting(Meeting):
         proxy = True
 
 
+class MeetingNotThereAdmin(admin.GeoModelAdmin):
+    ''' admin for meeting not theres '''
+    list_display = ('meeting', 'request_host', 'resolved', 'user', 'created_date',
+                    'updated_date')
+    list_filter = ('resolved',)
+    search_fields = ('meeting__name', 'request_host', 'user_agent', 'unique_phone_id',
+                     'user__username', 'meeting__creator__username')
+    raw_id_fields = ('meeting',)
+
+
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(MapMeeting, MapMeetingAdmin)
 admin.site.register(MeetingType, MeetingTypeAdmin)
+admin.site.register(MeetingNotThere, MeetingNotThereAdmin)
