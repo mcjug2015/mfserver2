@@ -1,8 +1,11 @@
 ''' tests for the admin module '''
-# pylint: disable=protected-access
-from django_app import admin
-from mockito import mock
+# pylint: disable=protected-access, no-member
 from django.test.testcases import TestCase
+from django_app.admin import MeetingNotThereAdmin
+from django_app.models import MeetingNotThere
+from django_app import admin
+from mockito.mockito import when
+from mockito import mock
 
 
 class LatLongWidgetTests(TestCase):
@@ -71,3 +74,23 @@ class CigarShopAdminTests(TestCase):
         db_field.name = 'geo_location'
         retval = self.the_admin.formfield_for_dbfield(db_field, request=mock())
         self.assertEquals(type(retval), admin.LatLongField)
+
+
+class MeetingNotThereAdminTests(TestCase):
+    ''' tests for the meeting not there admin '''
+    fixtures = ['users_groups_perms.json', 'meetings.json']
+
+    def setUp(self):
+        ''' set up the test '''
+        self.admin = MeetingNotThereAdmin(MeetingNotThere, None)
+
+    def test_deactivate_resolve(self):
+        ''' test deactivating and resolving '''
+        request = mock()
+        when(request).get_full_path().thenReturn("http://www.testing.org")
+        queryset = MeetingNotThere.objects.filter(meeting__name='awesome meeting')
+        retval = self.admin.deactivate_resolve(request, queryset)
+        self.assertEquals(retval['Location'], "http://www.testing.org")
+        not_there = MeetingNotThere.objects.get(meeting__name='awesome meeting')
+        self.assertTrue(not_there.resolved)
+        self.assertFalse(not_there.meeting.is_active)

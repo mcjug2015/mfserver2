@@ -31,5 +31,15 @@
         "updated_date": "2011-09-01T13:20:30+03:00",
         "is_active": true
     }
+},
+{
+    "model": "django_app.meetingnotthere", 
+    "pk": 1, 
+    "fields": {
+        "meeting": 1,
+        "created_date": "2011-09-01T13:20:30+03:00",
+        "updated_date": "2011-09-01T13:20:30+03:00",
+        "resolved": false
+    }
 }
 ]

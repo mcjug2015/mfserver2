@@ -1,8 +1,9 @@
 ''' admin module '''
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods, no-self-use
 from django.contrib.gis import admin
 from django import forms
 from django.core import validators
+from django.http.response import HttpResponseRedirect
 from django_app.models import Meeting, MeetingType, MeetingNotThere
 
 
@@ -65,8 +66,8 @@ class MeetingTypeAdmin(admin.GeoModelAdmin):
 class MapMeetingAdmin(admin.GeoModelAdmin):
     ''' admin for meetings that shows a map '''
     list_display = ('name', 'description', 'address', 'day_of_week', 'start_time',
-                    'end_time', 'creator', 'created_date', 'updated_date')
-    list_filter = ('day_of_week',)
+                    'end_time', 'is_active', 'creator', 'created_date', 'updated_date')
+    list_filter = ('day_of_week', 'is_active')
     search_fields = ('name', 'description', 'address', 'creator__username')
 
 
@@ -95,6 +96,18 @@ class MeetingNotThereAdmin(admin.GeoModelAdmin):
     search_fields = ('meeting__name', 'request_host', 'user_agent', 'unique_phone_id',
                      'user__username', 'meeting__creator__username')
     raw_id_fields = ('meeting',)
+    actions = ['deactivate_resolve']
+
+    def deactivate_resolve(self, request, queryset):
+        ''' deactivate the linked meetings and resolve the meeting_not_theres '''
+        for not_there in queryset:
+            not_there.meeting.is_active = False
+            not_there.meeting.save()
+            not_there.resolved = True
+            not_there.save()
+        return HttpResponseRedirect(request.get_full_path())
+
+    deactivate_resolve.short_description = 'Deactivate and resolve selected'
 
 
 admin.site.register(Meeting, MeetingAdmin)
