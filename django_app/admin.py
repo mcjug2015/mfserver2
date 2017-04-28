@@ -1,9 +1,9 @@
 ''' admin module '''
 # pylint: disable=too-few-public-methods, no-self-use
-from django.contrib.gis import admin
 from django import forms
 from django.core import validators
 from django.http.response import HttpResponseRedirect
+from django.contrib.gis import admin
 from django_app.models import Meeting, MeetingType, MeetingNotThere
 
 
@@ -63,12 +63,20 @@ class MeetingTypeAdmin(admin.GeoModelAdmin):
     search_fields = ('short_name', 'name', 'description')
 
 
+class MeetingNotThereInline(admin.TabularInline):
+    ''' inline for meetingnotthere '''
+    model = MeetingNotThere
+    raw_id_fields = ('user',)
+
+
 class MapMeetingAdmin(admin.GeoModelAdmin):
     ''' admin for meetings that shows a map '''
     list_display = ('name', 'description', 'address', 'day_of_week', 'start_time',
                     'end_time', 'is_active', 'creator', 'created_date', 'updated_date')
     list_filter = ('day_of_week', 'is_active')
     search_fields = ('name', 'description', 'address', 'creator__username')
+    raw_id_fields = ('creator',)
+    inlines = [MeetingNotThereInline]
 
 
 class MeetingAdmin(MapMeetingAdmin):
@@ -95,7 +103,7 @@ class MeetingNotThereAdmin(admin.GeoModelAdmin):
     list_filter = ('resolved',)
     search_fields = ('meeting__name', 'request_host', 'user_agent', 'unique_phone_id',
                      'user__username', 'meeting__creator__username')
-    raw_id_fields = ('meeting',)
+    raw_id_fields = ('meeting', 'user')
     actions = ['deactivate_resolve']
 
     def deactivate_resolve(self, request, queryset):
