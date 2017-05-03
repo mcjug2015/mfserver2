@@ -1,0 +1,7 @@
+#cloud-config
+
+packages:
+ - git
+
+runcmd:
+- [git, clone, "https://github.com/mcjug2015/mfserver2.git", "/tmp/mfserver2/"]

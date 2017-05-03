@@ -3,3 +3,5 @@
 /db.sqlite3
 /py_coverage/
 /.coverage
+/aabuddy_mfserver2_dump.txt
+/aabuddy_mfserver2_dump.txt.lst
