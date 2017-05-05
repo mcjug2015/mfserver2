@@ -5,3 +5,4 @@ packages:
 
 runcmd:
 - [git, clone, "https://github.com/mcjug2015/mfserver2.git", "/tmp/mfserver2/"]
+- [sh, "/tmp/mfserver2/provisioning/misc/do_salt.sh"]

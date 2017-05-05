@@ -1,7 +1,7 @@
 import os
 import sys
 from fabric.api import env, local
-from fabric.context_managers import warn_only
+from fabric.context_managers import warn_only, lcd
 
 
 def _ensure_virtualenv():
@@ -128,3 +128,16 @@ def sudo_reboot_all():
         local('sudo systemctl stop uwsgi')
     local('sudo systemctl start uwsgi')
     local('sudo systemctl start nginx')
+
+
+def create_do_box(do_token):
+    with lcd("provisioning/terraform/do"):
+        local('''terraform plan -var "do_token=%s" -out the_plan''' % do_token)
+        local('''terraform apply the_plan''')
+        local('''terraform show''')
+
+
+def destroy_do_box(do_token):
+    with warn_only():
+        with lcd("provisioning/terraform/do"):
+            local('''terraform destroy -force -var "do_token=%s"''' % do_token)
