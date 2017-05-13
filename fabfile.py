@@ -2,6 +2,9 @@ import os
 import sys
 from fabric.api import env, local
 from fabric.context_managers import warn_only, lcd
+from datetime import datetime
+import time
+from fabric.utils import abort
 
 
 def _ensure_virtualenv():
@@ -135,6 +138,23 @@ def create_do_box(do_token):
         local('''terraform plan -var "do_token=%s" -out the_plan''' % do_token)
         local('''terraform apply the_plan''')
         local('''terraform show''')
+
+
+def create_do_box_and_wait(do_token, max_wait=720):
+    ''' blocking create_do_box '''
+    create_do_box(do_token)
+    with lcd("provisioning/terraform/do"):
+        ip_address = local("""terraform output ip""", capture=True)
+        ip_address = ip_address.strip()
+    output = ""
+    timeout = time.time() + max_wait
+    while time.time() < timeout and "Welcome to meeting finder server 2" not in output:
+        with warn_only():
+            output = local("""curl -k https://%s/mfserver2/welcome/""" % ip_address, capture=True)
+        if "Welcome to meeting finder server 2" not in output:
+            time.sleep(60)
+    if "Welcome to meeting finder server 2" not in output:
+        abort("Mfserver2 provisioning did not complete in %s seconds" % max_wait)
 
 
 def destroy_do_box(do_token):

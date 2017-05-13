@@ -23,3 +23,8 @@ resource "digitalocean_droplet" "mfserver2" {
   user_data = "${file("./../cloud_init.txt")}"
   ssh_keys = ["${digitalocean_ssh_key.vsemenov_vb_ssh_key.id}"]
 }
+
+
+output "ip" {
+  value = "${digitalocean_droplet.mfserver2.ipv4_address}"
+}
