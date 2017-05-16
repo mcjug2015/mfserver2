@@ -4,14 +4,21 @@
 #terraform destroy -var "do_token=..."
 
 variable "do_token" {}
+variable "ssh_key_local_path" {
+  default = "./../vb_key.pub"
+}
+variable "ssh_key_do_name" {
+  default = "Victors vb public ssh key"
+}
+
 
 provider "digitalocean" {
   token = "${var.do_token}"
 }
 
 resource "digitalocean_ssh_key" "vsemenov_vb_ssh_key" {
-    name = "Victors vb public ssh key"
-    public_key = "${file("./../vb_key.pub")}"
+    name = "${var.ssh_key_do_name}"
+    public_key = "${file("${var.ssh_key_local_path}")}"
 }
 
 # Create a web server

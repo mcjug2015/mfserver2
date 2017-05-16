@@ -133,16 +133,22 @@ def sudo_reboot_all():
     local('sudo systemctl start nginx')
 
 
-def create_do_box(do_token):
+def create_do_box(do_token, ssh_key_local_path="./../vb_key.pub",
+                  ssh_key_do_name="Victors vb public ssh key"):
     with lcd("provisioning/terraform/do"):
-        local('''terraform plan -var "do_token=%s" -out the_plan''' % do_token)
+        local('''terraform plan -var "do_token=%s" -var "ssh_key_local_path=%s" -var "ssh_key_do_name=%s" -out the_plan''' % (do_token,
+                                                                                                                              ssh_key_local_path,
+                                                                                                                              ssh_key_do_name))
         local('''terraform apply the_plan''')
         local('''terraform show''')
 
 
-def create_do_box_and_wait(do_token, max_wait=720):
+def create_do_box_and_wait(do_token,
+                           ssh_key_local_path="./../vb_key.pub",
+                           ssh_key_do_name="Victors vb public ssh key",
+                           max_wait=720):
     ''' blocking create_do_box '''
-    create_do_box(do_token)
+    create_do_box(do_token, ssh_key_local_path, ssh_key_do_name)
     with lcd("provisioning/terraform/do"):
         ip_address = local("""terraform output ip""", capture=True)
         ip_address = ip_address.strip()
