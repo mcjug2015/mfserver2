@@ -134,7 +134,7 @@ def sudo_reboot_all():
 
 
 def create_do_box(do_token, ssh_key_local_path="./../vb_key.pub",
-                  ssh_key_do_name="Victors vb public ssh key"):
+                  ssh_key_do_name="Victors_vb_public_ssh_key"):
     with lcd("provisioning/terraform/do"):
         local('''terraform plan -var "do_token=%s" -var "ssh_key_local_path=%s" -var "ssh_key_do_name=%s" -out the_plan''' % (do_token,
                                                                                                                               ssh_key_local_path,
@@ -145,7 +145,7 @@ def create_do_box(do_token, ssh_key_local_path="./../vb_key.pub",
 
 def create_do_box_and_wait(do_token,
                            ssh_key_local_path="./../vb_key.pub",
-                           ssh_key_do_name="Victors vb public ssh key",
+                           ssh_key_do_name="Victors_vb_public_ssh_key",
                            max_wait=720):
     ''' blocking create_do_box '''
     create_do_box(do_token, ssh_key_local_path, ssh_key_do_name)
