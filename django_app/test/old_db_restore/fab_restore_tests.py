@@ -17,4 +17,18 @@ class RestoreTests(TestCase):
         ''' make sure restore invokes the local method 4 times '''
         when(fab_restore).local(any()).thenReturn(None)
         fab_restore.restore("testing")
-        verify(fab_restore, times=4).local(any())
+        verify(fab_restore, times=5).local(any())
+
+
+class SudoOldToNewTests(TestCase):
+    ''' tests for the old to new fab function '''
+
+    def tearDown(self):
+        ''' tear down the test '''
+        unstub()
+
+    def test_success(self):
+        ''' make sure restore invokes the local method 4 times '''
+        when(fab_restore).local(any()).thenReturn(None)
+        fab_restore.sudo_reload_db()
+        verify(fab_restore, times=3).local(any())
