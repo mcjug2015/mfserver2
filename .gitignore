@@ -5,3 +5,5 @@
 /.coverage
 /aabuddy_mfserver2_dump.txt
 /aabuddy_mfserver2_dump.txt.lst
+/aabuddy_mfserver2_data.dump
+/aabuddy_mfserver2_schema.dump
