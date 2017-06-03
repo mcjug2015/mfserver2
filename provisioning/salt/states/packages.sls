@@ -1,9 +1,6 @@
 postgres-repo:
-   pkgrepo.managed:
-     - name: postgres-centos
-     - humanname: postgres-centos
-     - baseurl: {{pillar['pg_repo']}}
-     - gpgcheck: 0
+  cmd.run:
+    - name: yum -y install https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 
 
 yum-packages:
@@ -32,7 +29,7 @@ yum-packages:
       - {{pillar['pg_devel_name']}}
       - {{pillar['postgis_name']}}
     - require:
-      - pkgrepo: postgres-repo
+      - cmd: postgres-repo
 
 
 py-packages:

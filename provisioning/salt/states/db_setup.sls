@@ -4,7 +4,7 @@ pg_conf:
     - marker_start: "# BLOCK TOP : salt managed zone : postgresql.conf : please do not edit"
     - marker_end: "# BLOCK BOTTOM : end of salt managed zone --"
     - content: |
-        data_directory = '/var/lib/pgsql/9.4/data'
+        data_directory = '{{pillar['pg_data_path']}}'
         listen_addresses = '*'
         port = 5432
     - show_changes: True

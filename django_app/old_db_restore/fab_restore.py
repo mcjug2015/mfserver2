@@ -26,5 +26,5 @@ def restore(schema_dump_path, data_dump_path):
 def sudo_reload_db():
     ''' move data from old db to new one, vacuum and reboot db '''
     local("""sudo -i -u postgres bash -c 'vacuumdb mfserver2'""")
-    local("""sudo systemctl stop postgresql-9.4""")
-    local("""sudo systemctl start postgresql-9.4""")
+    local("""sudo systemctl stop postgresql-9.6""")
+    local("""sudo systemctl start postgresql-9.6""")

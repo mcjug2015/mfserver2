@@ -27,13 +27,14 @@ db_name: mfserver2
 # postgresql95-server 9.5.4-1PGDG.rhel7
 # postgresql95-devel 9.5.4-1PGDG.rhel7
 # postgis2_95 2.2.2-1.rhel7
-pg_repo: http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/
-pg_server_name: postgresql94-server
-pg_server_unit_name: postgresql-9.4
-pg_devel_name: postgresql94-devel
-postgis_name: postgis2_94
+pg_repo: https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/
+pg_server_name: postgresql96-server
+pg_server_unit_name: postgresql-9.6
+pg_devel_name: postgresql96-devel
+postgis_name: postgis2_96
 postgis_version: 2.1.8-1.rhel7
-pg_setup_path: /usr/pgsql-9.4/bin/postgresql94-setup
-pg_data_path: /var/lib/pgsql/9.4/data/
-pg_conf_path: /var/lib/pgsql/9.4/data/postgresql.conf
-pg_hba_path: /var/lib/pgsql/9.4/data/pg_hba.conf
+pg_setup_path: /usr/pgsql-9.6/bin/postgresql96-setup
+pg_data_path: /var/lib/pgsql/9.6/data/
+pg_conf_path: /var/lib/pgsql/9.6/data/postgresql.conf
+pg_hba_path: /var/lib/pgsql/9.6/data/pg_hba.conf
+pg_bin_path: /usr/pgsql-9.6/bin/
