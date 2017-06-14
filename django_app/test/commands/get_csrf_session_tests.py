@@ -20,22 +20,14 @@ class CommandTests(TestCase):
 
     def test_handle(self):
         ''' verify the handle method invokes the expected methods '''
-        response1 = mock()
-        response1.text = '<html><body><input value="token1"/></body></html>'
-        response1.cookies = {'csrftoken': 'cookie1'}
-        when(get_csrf_session.requests).get(any(), verify=False).thenReturn(response1)
-        response2 = mock()
-        response2.cookies = {'csrftoken': 'cookie2',
-                             'sessionid': 'session_cookie1'}
-        when(get_csrf_session.requests).post(any(), headers=any(),
-                                             cookies=any(), json=any(),
-                                             verify=False).thenReturn(response2)
+        when(get_csrf_session.RefererTokenSessionHelper).get_referer().thenReturn("test1")
+        when(get_csrf_session.RefererTokenSessionHelper).get_token_session().thenReturn(("test2", "test3"))
         retval = self.command.handle(username='a',
                                      password='b',
                                      initial_url='https://example.com:8000',
                                      login_url='d')
-        expected = 'curl -f -k -v --cookie "csrftoken=token1;sessionid=session_cookie1"'
-        expected += ' -H "X-CSRFToken: token1" -H "referer: https://example.com:8000"'
+        expected = 'curl -f -k -v --cookie "csrftoken=test2;sessionid=test3"'
+        expected += ' -H "X-CSRFToken: test2" -H "referer: test1"'
         self.assertEquals(expected, retval)
 
     def test_add_arguments(self):
