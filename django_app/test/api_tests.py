@@ -94,6 +94,16 @@ class SaveMeetingTests(TestCase):
         retval = SaveMeetingResource().save(bundle)
         self.assertIsNotNone(retval)
 
+    def test_full_hydrate(self):
+        ''' full hydrate sets creator to request user '''
+        bundle = mock()
+        bundle.request = mock()
+        bundle.request.user = User(username="test123")
+        bundle.obj = Meeting()
+        when(ModelResource).full_hydrate(any()).thenReturn(bundle)
+        SaveMeetingResource().full_hydrate(bundle)
+        self.assertEquals(bundle.obj.creator.username, "test123")
+
 
 class ExceptionThrowingModelResourceTests(TestCase):
     ''' unit tests for the ExceptionThrowingModelResource '''

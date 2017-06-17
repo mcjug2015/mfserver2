@@ -16,8 +16,7 @@ from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.contrib.auth.models import User
 from django.contrib.gis.geos.factory import fromstr
 from django_app.models import MeetingType, Meeting, MeetingNotThere
-from django_app.auth import UserObjectsAuthorization,\
-    OwnerObjectsOnlyAuthorization
+from django_app.auth import UserObjectsAuthorization
 from django_app.forms import MeetingForm
 LOGGER = logging.getLogger(__name__)
 
@@ -123,8 +122,14 @@ class MeetingValidation(Validation):
 
 class SaveMeetingResource(ExceptionThrowingModelResource):
     ''' meeting endpoint for saving meetings '''
-    creator = fields.ToOneField(UserResource, 'creator')
+    creator = fields.ToOneField(UserResource, 'creator', null=True)
     types = fields.ToManyField(MeetingTypeResource, 'types')
+
+    def full_hydrate(self, bundle):
+        ''' populate the meetings creator. always set to the user doing the creation '''
+        retval = super(SaveMeetingResource, self).full_hydrate(bundle)
+        retval.obj.creator = retval.request.user
+        return retval
 
     def save(self, bundle, skip_errors=False):
         '''
@@ -146,7 +151,7 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
         queryset = Meeting.objects.all()
         allowed_methods = ['get', 'post']
         authentication = SessionAuthentication()
-        authorization = OwnerObjectsOnlyAuthorization()
+        authorization = Authorization()
         validation = MeetingValidation()
         max_limit = 50
 
