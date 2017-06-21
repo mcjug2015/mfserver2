@@ -15,32 +15,32 @@ class GetUserToRegisterTests(TestCase):
 
     def test_existing_user_fail(self):
         ''' make sure existing user with and without confs is not elligible to register '''
-        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
+        result = user_service.get_user_to_register("mf_test@test.com")
         self.assertIsNone(result["user"])
 
-        user = User.objects.get(username="mf_admin")
+        user = User.objects.get(email="mf_test@test.com")
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
-        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
+        result = user_service.get_user_to_register("mf_test@test.com")
         self.assertIsNone(result["user"])
 
     def test_existing_user_success(self):
         ''' make sure existing user with unconfirmed, expired conf can register '''
-        user = User.objects.get(username="mf_admin")
+        user = User.objects.get(email="mf_test@test.com")
         user.is_active = False
         user.save()
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.expiration_date = timezone.now() - datetime.timedelta(days=50)
         user_confirmation.save()
-        result = user_service.get_user_to_register("mf_test@test.com", "mf_admin")
+        result = user_service.get_user_to_register("mf_test@test.com")
         self.assertIn("inactive user", result["status"])
-        self.assertEquals(result["user"].email, "mf_test@test.com")
+        self.assertEquals(result["user"].username, "mf_admin")
 
     def test_new_user(self):
         ''' test getting a new user back '''
-        result = user_service.get_user_to_register("test@mooo.com", "testusername")
-        self.assertEquals(result["status"], "brand new user testusername")
+        result = user_service.get_user_to_register("test@mooo.com")
+        self.assertEquals(result["status"], "brand new user test@mooo.com")
         self.assertEquals(result["user"].email, "test@mooo.com")
 
 
@@ -55,9 +55,9 @@ class CreateUserAnConfTests(TestCase):
         ''' make sure nothing happens if user should not be registered '''
         self.assertEquals(User.objects.all().count(), 1)
         self.assertEquals(UserConfirmation.objects.all().count(), 0)
-        when(user_service).get_user_to_register(any(), any()).thenReturn({"status": "no",
-                                                                          "user": None})
-        result = user_service.create_user_and_conf('test1234@test.com', 'mooo1', 'mooo1')
+        when(user_service).get_user_to_register(any()).thenReturn({"status": "no",
+                                                                   "user": None})
+        result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
         self.assertEquals(User.objects.all().count(), 1)
         self.assertEquals(UserConfirmation.objects.all().count(), 0)
         self.assertEquals(result["status"], "no")
@@ -66,13 +66,14 @@ class CreateUserAnConfTests(TestCase):
         ''' make sure method successfully creates user and conf '''
         self.assertEquals(User.objects.all().count(), 1)
         self.assertEquals(UserConfirmation.objects.all().count(), 0)
-        user = User(pk=1000, username='mooo1', email='test1234@test.com', first_name='NOT_SET', last_name='NOT_SET',
+        user = User(pk=1000, username='test1234@test.com', email='test1234@test.com',
+                    first_name='NOT_SET', last_name='NOT_SET',
                     is_active=False, is_superuser=False, is_staff=False)
-        when(user_service).get_user_to_register(any(), any()).thenReturn({"user": user})
-        result = user_service.create_user_and_conf('test1234@test.com', 'mooo1', 'mooo1')
+        when(user_service).get_user_to_register(any()).thenReturn({"user": user})
+        result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
         self.assertEquals(User.objects.all().count(), 2)
         self.assertEquals(UserConfirmation.objects.all().count(), 1)
-        self.assertEquals(result["user"].username, 'mooo1')
+        self.assertEquals(result["user"].username, 'test1234@test.com')
         self.assertEquals(len(result["conf"].confirmation_key), 64)
         self.assertEquals(result["conf"].conf_type, "registration")
 

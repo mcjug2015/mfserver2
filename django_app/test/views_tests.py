@@ -17,7 +17,7 @@ class RegisterUserViewTests(TestCase):
         ''' set up test '''
         self.result = {}
         when(views).send_email_to_user(any(), any(), any()).thenReturn(None)
-        when(views.user_service).create_user_and_conf(any(), any(), any()).thenReturn(self.result)
+        when(views.user_service).create_user_and_conf(any(), any()).thenReturn(self.result)
 
     def tearDown(self):
         ''' tear down test '''

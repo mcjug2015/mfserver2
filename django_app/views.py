@@ -57,7 +57,7 @@ class RegisterUserView(View):
         json_obj = json.loads(request.body)
         email = json_obj["email"]
         password = json_obj["password"]
-        result = user_service.create_user_and_conf(email, email, password)
+        result = user_service.create_user_and_conf(email, password)
         if result["user"]:
             LOGGER.info("Registered user %s, status: %s", email, result["status"])
             link_address = request.build_absolute_uri() + '?confirmation=' + result["conf"].confirmation_key
