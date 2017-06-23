@@ -14,34 +14,22 @@ class GetUserToRegisterTests(TestCase):
     ''' tests for the get user to register method '''
 
     def test_existing_user_fail(self):
-        ''' make sure existing user with and without confs is not elligible to register '''
-        result = user_service.get_user_to_register("mf_test@test.com")
-        self.assertIsNone(result["user"])
-
-        user = User.objects.get(email="mf_test@test.com")
-        user_confirmation = UserConfirmation(user=user, conf_type="registration")
-        user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
-        user_confirmation.save()
-        result = user_service.get_user_to_register("mf_test@test.com")
-        self.assertIsNone(result["user"])
+        ''' make sure active existing user is not elligible to register '''
+        result = user_service.get_user_to_register("mf_admin")
+        self.assertIsNone(result)
 
     def test_existing_user_success(self):
         ''' make sure existing user with unconfirmed, expired conf can register '''
         user = User.objects.get(email="mf_test@test.com")
         user.is_active = False
         user.save()
-        user_confirmation = UserConfirmation(user=user, conf_type="registration")
-        user_confirmation.expiration_date = timezone.now() - datetime.timedelta(days=50)
-        user_confirmation.save()
-        result = user_service.get_user_to_register("mf_test@test.com")
-        self.assertIn("inactive user", result["status"])
-        self.assertEquals(result["user"].username, "mf_admin")
+        result = user_service.get_user_to_register("mf_admin")
+        self.assertEquals(result.username, "mf_admin")
 
     def test_new_user(self):
         ''' test getting a new user back '''
         result = user_service.get_user_to_register("test@mooo.com")
-        self.assertEquals(result["status"], "brand new user test@mooo.com")
-        self.assertEquals(result["user"].email, "test@mooo.com")
+        self.assertEquals(result.email, "test@mooo.com")
 
 
 class CreateUserAnConfTests(TestCase):
@@ -55,12 +43,11 @@ class CreateUserAnConfTests(TestCase):
         ''' make sure nothing happens if user should not be registered '''
         self.assertEquals(User.objects.all().count(), 1)
         self.assertEquals(UserConfirmation.objects.all().count(), 0)
-        when(user_service).get_user_to_register(any()).thenReturn({"status": "no",
-                                                                   "user": None})
+        when(user_service).get_user_to_register(any()).thenReturn(None)
         result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
         self.assertEquals(User.objects.all().count(), 1)
         self.assertEquals(UserConfirmation.objects.all().count(), 0)
-        self.assertEquals(result["status"], "no")
+        self.assertEquals(result["status"], "Active user with email test1234@test.com already exists")
 
     def test_success(self):
         ''' make sure method successfully creates user and conf '''
@@ -69,7 +56,7 @@ class CreateUserAnConfTests(TestCase):
         user = User(pk=1000, username='test1234@test.com', email='test1234@test.com',
                     first_name='NOT_SET', last_name='NOT_SET',
                     is_active=False, is_superuser=False, is_staff=False)
-        when(user_service).get_user_to_register(any()).thenReturn({"user": user})
+        when(user_service).get_user_to_register(any()).thenReturn(user)
         result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
         self.assertEquals(User.objects.all().count(), 2)
         self.assertEquals(UserConfirmation.objects.all().count(), 1)
@@ -89,7 +76,7 @@ class CompleteUserRegistration(TestCase):
         ''' make sure method fails if no conf exists with the str passed in '''
         result = user_service.complete_user_registration("wrong")
         self.assertEquals(result["status"],
-                          "Confirmation ivalid or expired, unable to complete user registration")
+                          "Confirmation ivalid, used or expired, unable to complete user registration")
         self.assertEquals(User.objects.filter(is_active=True).count(), 0)
 
     def test_success(self):

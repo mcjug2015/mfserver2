@@ -11,51 +11,44 @@ from django_app.models import UserConfirmation
 def get_user_to_register(email):
     '''
         if no matching user exists will return an unsaved user obj
-        if matching user exists, is inactive and has an expired unconfirmed conf
-            that user will be returned. This is done to prevent people from holding
-            up usernames/emails by using email addresses they don't have control over.
-        in all other cases None will be returned since registration should not go through
+        if matching user exists but is inactive, will return that db object
+        Otherwise None will be returned since registration should not go through
     '''
-    retval = {"user": None,
-              "status": ""}
-    user_query = User.objects.filter(email=email)
+    retval = None
+    user_query = User.objects.filter(username=email)
     if user_query.count() == 0:
         next_pk = User.objects.latest('pk').pk + 1
         user = User(pk=next_pk, username=email, email=email, first_name='NOT_SET', last_name='NOT_SET',
                     is_active=False, is_superuser=False, is_staff=False)
-        retval["user"] = user
-        retval["status"] = "brand new user %s" % email
-        return retval
-    user = user_query[0:1][0]
-    conf_query = user.confirmations.filter(conf_type="registration", is_confirmed=False,
-                                           expiration_date__lt=timezone.now())
-    if not user.is_active and conf_query.count() > 0:
-        retval["user"] = user
-        retval["status"] = "inactive user %s with expired, unconfirmed conf" % email
-        return retval
-    retval["status"] = "registration should not proceed for %s. is_active: %s; loose conf #%s" % (email,
-                                                                                                  user.is_active,
-                                                                                                  conf_query.count())
+        retval = user
+    else:
+        user = user_query[0:1][0]
+        if not user.is_active:
+            retval = user
     return retval
 
 
 def create_user_and_conf(email, password):
     ''' create an inactive user and a conf to activate him with '''
-    user_dict = get_user_to_register(email)
-    user = user_dict["user"]
+    retval = {"user": None,
+              "conf": None,
+              "status": "Active user with email %s already exists" % email}
+    user = get_user_to_register(email)
     if not user:
-        return user_dict
+        return retval
+    retval["user"] = user
+    retval["status"] = "confirmation emailed to %s, click the link to complete registration" % email
     user.set_password(password)
     user.save()
     user_confirmation = create_conf(user=user, conf_type="registration")
     user_confirmation.save()
-    user_dict["conf"] = user_confirmation
-    return user_dict
+    retval["conf"] = user_confirmation
+    return retval
 
 
 def complete_user_registration(conf_str):
     ''' set user to active if the conf str is good '''
-    retval = {"status": "Confirmation ivalid or expired, unable to complete user registration",
+    retval = {"status": "Confirmation ivalid, used or expired, unable to complete user registration",
               "code": 400}
     conf_query = UserConfirmation.objects.filter(confirmation_key=conf_str,
                                                  conf_type="registration",
