@@ -10,15 +10,14 @@ class UserConfirmation(models.Model):
     ''' db thing that allows users to confirm accounts '''
     user = models.ForeignKey(User, related_name='confirmations', null=False, blank=False, on_delete=models.CASCADE)
     created_date = models.DateTimeField(null=False, blank=False, default=timezone.now)
-    expiration_date = models.DateTimeField(null=False, blank=False)
     confirmation_key = models.CharField(max_length=64, null=False, blank=False)
     is_confirmed = models.BooleanField(default=False)
     confirmation_date = models.DateTimeField(null=True, blank=True)
     conf_type = models.CharField(max_length=64, null=False, blank=False, default="registration")
 
     def __unicode__(self):
-        return u"%s %s(%s)" % (str(self.expiration_date)[0:16], self.conf_type,
-                               self.user.username)
+        return u"%s(%s)" % (self.conf_type,
+                            self.user.username)
 
 
 class CigarShop(models.Model):

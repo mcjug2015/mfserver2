@@ -1,7 +1,5 @@
 ''' tests module for user_service '''
 # pylint: disable=no-member
-import datetime
-from django.utils import timezone
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User
 from mockito.mockito import when, unstub
@@ -84,7 +82,6 @@ class CompleteUserRegistration(TestCase):
         user = User.objects.get(username="mf_admin")
         user_confirmation = UserConfirmation(user=user, conf_type="registration")
         user_confirmation.confirmation_key = "right"
-        user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
         result = user_service.complete_user_registration("right")
         self.assertIn("Successfully completed registration for", result["status"])
@@ -126,19 +123,11 @@ class ResetPasswordTests(TestCase):
         retval = user_service.reset_password(UserConfirmation(is_confirmed=True), "irrelevant")
         self.assertIn("has already been used", retval)
 
-    def test_expired(self):
-        ''' error message returned if conf is expired '''
-        expiration_date = timezone.now() - datetime.timedelta(days=5)
-        retval = user_service.reset_password(UserConfirmation(expiration_date=expiration_date),
-                                             "irrelevant")
-        self.assertIn("clicked expired on", retval)
-
     def test_success(self):
         ''' test successfully resetting password '''
         user = User.objects.get(username="mf_admin")
         user_confirmation = UserConfirmation(user=user, conf_type="reset_password")
         user_confirmation.confirmation_key = "right"
-        user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
         user_confirmation.save()
         retval = user_service.reset_password(user_confirmation, "test_password123")
         self.assertIn("Successfully changed password", retval)

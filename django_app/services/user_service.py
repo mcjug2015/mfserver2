@@ -1,6 +1,5 @@
 ''' user services module '''
 # pylint: disable=no-member
-import datetime
 import random
 import string
 from django.contrib.auth.models import User
@@ -52,8 +51,7 @@ def complete_user_registration(conf_str):
               "code": 400}
     conf_query = UserConfirmation.objects.filter(confirmation_key=conf_str,
                                                  conf_type="registration",
-                                                 is_confirmed=False,
-                                                 expiration_date__gt=timezone.now())
+                                                 is_confirmed=False)
     if conf_query.count() == 0:
         return retval
     conf = conf_query[0:1][0]
@@ -89,8 +87,6 @@ def reset_password(conf, password):
     ''' reset password or error out '''
     if conf.is_confirmed:
         return "The password reset link you clicked has already been used and can not be used again."
-    if conf.expiration_date < timezone.now():
-        return "The password reset link you clicked expired on %s and can not be used" % conf.expiration_date
     conf.user.set_password(password)
     conf.user.save()
     conf.is_confirmed = True
@@ -102,7 +98,6 @@ def reset_password(conf, password):
 def create_conf(user, conf_type):
     ''' create a user confirmation '''
     user_confirmation = UserConfirmation(user=user, conf_type=conf_type)
-    user_confirmation.expiration_date = timezone.now() + datetime.timedelta(days=3)
     user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
                                                   for i in range(0, 64)])  # pylint: disable=unused-variable
     return user_confirmation

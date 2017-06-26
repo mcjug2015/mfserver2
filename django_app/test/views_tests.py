@@ -3,7 +3,6 @@
 import json
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User
-from django.utils import timezone
 from mockito.mockito import unstub, when, verify
 from mockito.matchers import any  # pylint: disable=redefined-builtin
 from django_app import views
@@ -199,8 +198,7 @@ class RequestResetPasswordTests(TestCase):
         ''' make sure view with username name confirmation key gets returned on get '''
         user = User.objects.get(username="mf_admin")
         user_conf = UserConfirmation(confirmation_key="testing456", user=user,
-                                     conf_type="password_reset",
-                                     expiration_date=timezone.now())
+                                     conf_type="password_reset")
         user_conf.save()
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": "testing456"})
@@ -240,8 +238,7 @@ class ResetPasswordTests(TestCase):
         ''' set up test '''
         self.user = User.objects.get(username="mf_admin")
         UserConfirmation(confirmation_key="testing456", user=self.user,
-                         conf_type="password_reset",
-                         expiration_date=timezone.now()).save()
+                         conf_type="password_reset").save()
 
     def tearDown(self):
         ''' tear down test '''

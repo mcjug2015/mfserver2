@@ -21,7 +21,7 @@ def forwards_func(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_app', '0002_auto_20170613_0014'),
+        ('django_app', '0002_auto_20170626_1801'),
     ]
 
     operations = [
