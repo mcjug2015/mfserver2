@@ -1,7 +1,7 @@
 import os
 import sys
 from fabric.api import env, local
-from fabric.context_managers import warn_only, lcd
+from fabric.context_managers import warn_only, lcd, shell_env
 from datetime import datetime
 import time
 from fabric.utils import abort
@@ -169,3 +169,25 @@ def destroy_do_box(do_token):
     with warn_only():
         with lcd("provisioning/terraform/do"):
             local('''terraform destroy -force -var "do_token=%s"''' % do_token)
+
+
+def backup_local_db(output_dir="./"):
+    meetings_file_path = os.path.join(output_dir, "mfserver2_backup.txt")
+    schema_file_path = os.path.join(output_dir, "mfserver2_backup_schema.txt")
+    data_file_path = os.path.join(output_dir, "mfserver2_backup_data.txt")
+    with shell_env(PGPASSWORD='mfserver2'):
+        local("""psql -h127.0.0.1 -Umfserver2 -dmfserver2 -c'select id, name, description, address, ST_AsText (geo_location), created_date from django_app_meeting' > %s""" % meetings_file_path)
+        local("""pg_dump -h127.0.0.1 -Umfserver2 --schema=public --schema-only --no-owner --verbose --no-acl --column-inserts --quote-all-identifiers mfserver2 > %s""" % schema_file_path)
+        local("""pg_dump -h127.0.0.1 -Umfserver2 --schema=public --data-only --no-owner --verbose --no-acl --column-inserts --quote-all-identifiers mfserver2 > %s""" % data_file_path)
+
+
+def restore_local_db(schema_dump_path="mfserver2_backup_schema.dump",
+                     data_dump_path="mfserver2_backup_data.dump"):
+    with shell_env(PGPASSWORD='mfserver2'):
+        with warn_only():
+            local('''psql -h127.0.0.1 -Umfserver2 -c"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'mfserver2';"''')
+        local("""dropdb -h127.0.0.1 -Umfserver2 --if-exists mfserver2""")
+        local("""createdb -h127.0.0.1 -Umfserver2 mfserver2""")
+        local('''psql -h127.0.0.1 -Umfserver2 mfserver2 -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;"''')
+        local("""psql -h127.0.0.1 -Umfserver2 -dmfserver2 mfserver2 < %s""" % schema_dump_path)
+        local("""psql -h127.0.0.1 -Umfserver2 -dmfserver2 mfserver2 < %s""" % data_dump_path)

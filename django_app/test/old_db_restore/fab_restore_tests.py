@@ -17,7 +17,7 @@ class RestoreTests(TestCase):
         ''' make sure restore invokes the local method 4 times '''
         when(fab_restore).local(any()).thenReturn(None)
         fab_restore.restore("testing", "testing")
-        verify(fab_restore, times=6).local(any())
+        verify(fab_restore, times=7).local(any())
 
 
 class SudoOldToNewTests(TestCase):

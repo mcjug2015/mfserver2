@@ -14,6 +14,7 @@ from fabric.api import local, shell_env, hide
 def restore(schema_dump_path, data_dump_path):
     ''' create old_aabuddy db, add postgis, use postgis_restore.pl to restore '''
     with shell_env(PGPASSWORD='mfserver2'):
+        local("""dropdb -h127.0.0.1 -Umfserver2 --if-exists old_aabuddy""")
         local("""createdb -h127.0.0.1 -Umfserver2 old_aabuddy""")
         local('''psql -h127.0.0.1 -Umfserver2 old_aabuddy -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;"''')  # noqa pylint: disable=line-too-long
         local('''chmod 775 django_app/old_db_restore/postgis_restore.pl''')
