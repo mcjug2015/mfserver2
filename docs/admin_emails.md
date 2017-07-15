@@ -12,6 +12,7 @@ EMAIL_PORT = 587
 Attempt and fail to send an email to yourself from the shell as reg_user
 ```
 cd /opt/mfserver2/code/
+source /opt/mfserver2/venv/bin/activate
 python manage.py shell
 from django.core.mail import EmailMessage
 email = EmailMessage('title', 'body', to=['victor.semenov@gmail.com'])
@@ -22,6 +23,7 @@ KABOOM
 This will fail and you'll get an email, the email may take 5-10 minutes to arrive. click it and tell google the attempt is legit. doing the same thing after the should succeed
 ```
 cd /opt/mfserver2/code/
+source /opt/mfserver2/venv/bin/activate
 python manage.py shell
 from django.core.mail import EmailMessage
 email = EmailMessage('title', 'body', to=['victor.semenov@gmail.com'])

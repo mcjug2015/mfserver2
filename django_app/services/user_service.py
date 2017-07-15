@@ -1,10 +1,14 @@
 ''' user services module '''
 # pylint: disable=no-member
+import logging
 import random
 import string
+import django.core.mail as django_mail
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.http.response import HttpResponseForbidden
 from django_app.models import UserConfirmation
+LOGGER = logging.getLogger(__name__)
 
 
 def get_user_to_register(email):
@@ -101,3 +105,23 @@ def create_conf(user, conf_type):
     user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
                                                   for i in range(0, 64)])  # pylint: disable=unused-variable
     return user_confirmation
+
+
+def get_conf_and_response(conf_str, conf_type):
+    '''
+        get (confirmation, response) if there is no confirmation for provided input
+        reponse will be none-none
+    '''
+    reset_conf = UserConfirmation.objects.filter(confirmation_key=conf_str,
+                                                 conf_type=conf_type)
+    if reset_conf.count() == 0:
+        return None, HttpResponseForbidden()
+    return reset_conf[0:1][0], None
+
+
+def send_email_to_user(user, subject_text, message_text):
+    ''' send email to user with supplied subject and body '''
+    LOGGER.debug("About to send conf email with message %s", message_text)
+    django_mail.send_mail(subject=subject_text, message=message_text,
+                          from_email="meetingfinder@noreply.com",
+                          recipient_list=[user.email], fail_silently=False)

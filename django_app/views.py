@@ -2,14 +2,11 @@
 # pylint: disable=no-self-use, no-member
 import json
 import logging
-import django.core.mail as django_mail
 from django.contrib.auth import authenticate, login, logout
-from django.http.response import JsonResponse, HttpResponse,\
-    HttpResponseForbidden
+from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django_app.services import user_service
-from django_app.models import UserConfirmation
 LOGGER = logging.getLogger(__name__)
 
 
@@ -62,7 +59,9 @@ class RegisterUserView(View):
             LOGGER.info("Registered user %s, status: %s", email, result["status"])
             link_address = request.build_absolute_uri() + '?confirmation=' + result["conf"].confirmation_key
             message_text = "Click the link below to complete the registration process\n%s" % link_address
-            send_email_to_user(result["user"], "Thank you for registering on Meeting Finder", message_text)
+            user_service.send_email_to_user(result["user"],
+                                            "Thank you for registering on Meeting Finder",
+                                            message_text)
             return HttpResponse(status=201,
                                 content="User %s registered, awaiting confirmation" % email)
         LOGGER.error("Failed to register user %s, reason: %s", email, result["status"])
@@ -95,7 +94,7 @@ class RequestResetPassword(View):
     def get(self, request):
         ''' show user the form to reset password '''
         conf_key = request.GET.get('confirmation', None)
-        conf, response = get_conf_and_response(conf_key, "password_reset")
+        conf, response = user_service.get_conf_and_response(conf_key, "password_reset")
         if response:
             response.content = "Invalid password reset link"
             return response
@@ -111,7 +110,9 @@ class RequestResetPassword(View):
             LOGGER.info("Sending reset password link to user %s", email)
             link_address = request.build_absolute_uri() + '?confirmation=' + result["conf"].confirmation_key
             message_text = "Click the link below to reset your meetingfinder password\n%s" % link_address
-            send_email_to_user(result["user"], "Your meeting finder password reset", message_text)
+            user_service.send_email_to_user(result["user"],
+                                            "Your meeting finder password reset",
+                                            message_text)
             return HttpResponse(status=200,
                                 content="Emailed password reset link to user %s " % email)
         LOGGER.error("Failed reset password for user %s, reason: %s", email, result["status"])
@@ -127,7 +128,7 @@ class ResetPassword(View):
             else return page with validation error
         '''
         conf_key = request.POST.get("reset_conf", None)
-        conf, response = get_conf_and_response(conf_key, "password_reset")
+        conf, response = user_service.get_conf_and_response(conf_key, "password_reset")
         if response:
             response.content = "Invalid password reset link"
             return response
@@ -148,23 +149,3 @@ class ResetPassword(View):
         else:
             status = 400
         return HttpResponse(status=status, content=result)
-
-
-def get_conf_and_response(conf_str, conf_type):
-    '''
-        get (confirmation, response) if there is no confirmation for provided input
-        reponse will be non-none
-    '''
-    reset_conf = UserConfirmation.objects.filter(confirmation_key=conf_str,
-                                                 conf_type=conf_type)
-    if reset_conf.count() == 0:
-        return None, HttpResponseForbidden()
-    return reset_conf[0:1][0], None
-
-
-def send_email_to_user(user, subject_text, message_text):
-    ''' send email to user with supplied subject and body '''
-    LOGGER.debug("About to send conf email with message %s", message_text)
-    django_mail.send_mail(subject=subject_text, message=message_text,
-                          from_email="meetingfinder@noreply.com",
-                          recipient_list=[user.email], fail_silently=False)

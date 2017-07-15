@@ -15,10 +15,10 @@ class TestUserCreation(TestCase):
 
     def setUp(self):
         ''' set up the test '''
-        when(views.django_mail).send_mail(subject=any(), message=any(),
-                                          from_email=any(),
-                                          recipient_list=any(),
-                                          fail_silently=any()).thenReturn(None)
+        when(views.user_service.django_mail).send_mail(subject=any(), message=any(),
+                                                       from_email=any(),
+                                                       recipient_list=any(),
+                                                       fail_silently=any()).thenReturn(None)
 
     def tearDown(self):
         ''' tear down test '''
@@ -32,10 +32,10 @@ class TestUserCreation(TestCase):
                                     data=json.dumps({"email": "test1234@test.com",
                                                      "password": "fake123"}))
         self.assertEquals(response.status_code, 201)
-        verify(views.django_mail).send_mail(subject=any(), message=any(),
-                                            from_email=any(),
-                                            recipient_list=any(),
-                                            fail_silently=any())
+        verify(views.user_service.django_mail).send_mail(subject=any(), message=any(),
+                                                         from_email=any(),
+                                                         recipient_list=any(),
+                                                         fail_silently=any())
         conf = UserConfirmation.objects.get(user__email='test1234@test.com')
         response = self.client.get("/mfserver2/register/", {"confirmation": conf.confirmation_key})
         self.assertEquals(response.status_code, 200)

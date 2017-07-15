@@ -1,8 +1,8 @@
 ''' tests module for user_service '''
-# pylint: disable=no-member
+# pylint: disable=no-member, no-self-use
 from django.test.testcases import TestCase
 from django.contrib.auth.models import User
-from mockito.mockito import when, unstub
+from mockito.mockito import when, unstub, verify
 from mockito.matchers import any  # pylint: disable=redefined-builtin
 from django_app.models import UserConfirmation
 from django_app.services import user_service
@@ -133,3 +133,23 @@ class ResetPasswordTests(TestCase):
         self.assertIn("Successfully changed password", retval)
         self.assertTrue(user_confirmation.is_confirmed)
         self.assertTrue(User.objects.get(username="mf_admin").check_password("test_password123"))
+
+
+class SendEmailToUserTest(TestCase):
+    ''' test send_email_to_user method with mocks '''
+
+    def tearDown(self):
+        ''' tear down test '''
+        unstub()
+
+    def test_send_email(self):
+        ''' test sending email to user '''
+        when(user_service.django_mail).send_mail(subject=any(), message=any(),
+                                                 from_email=any(),
+                                                 recipient_list=any(),
+                                                 fail_silently=any()).thenReturn(None)
+        user_service.send_email_to_user(User.objects.get(username="mf_admin"), "a", "b")
+        verify(user_service.django_mail).send_mail(subject=any(), message=any(),
+                                                   from_email=any(),
+                                                   recipient_list=any(),
+                                                   fail_silently=any())

@@ -15,7 +15,7 @@ class RegisterUserViewTests(TestCase):
     def setUp(self):
         ''' set up test '''
         self.result = {}
-        when(views).send_email_to_user(any(), any(), any()).thenReturn(None)
+        when(views.user_service).send_email_to_user(any(), any(), any()).thenReturn(None)
         when(views.user_service).create_user_and_conf(any(), any()).thenReturn(self.result)
 
     def tearDown(self):
@@ -40,7 +40,7 @@ class RegisterUserViewTests(TestCase):
                                     data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
         self.assertEquals(response.status_code, 201)
-        verify(views).send_email_to_user(any(), any(), any())
+        verify(views.user_service).send_email_to_user(any(), any(), any())
 
     def test_post_fail(self):
         ''' test registering an inelligible user '''
@@ -51,7 +51,7 @@ class RegisterUserViewTests(TestCase):
                                     data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
         self.assertEquals(response.status_code, 400)
-        verify(views, times=0).send_email_to_user(any(), any(), any())
+        verify(views.user_service, times=0).send_email_to_user(any(), any(), any())
 
 
 class LoginAsyncTests(TestCase):
@@ -127,26 +127,6 @@ class IndexViewTests(TestCase):
         self.assertIn("Welcome to meeting finder server 2", response.content)
 
 
-class SendEmailToUserTest(TestCase):
-    ''' test send_email_to_user method with mocks '''
-
-    def tearDown(self):
-        ''' tear down test '''
-        unstub()
-
-    def test_send_email(self):
-        ''' test sending email to user '''
-        when(views.django_mail).send_mail(subject=any(), message=any(),
-                                          from_email=any(),
-                                          recipient_list=any(),
-                                          fail_silently=any()).thenReturn(None)
-        views.send_email_to_user(User.objects.get(username="mf_admin"), "a", "b")
-        verify(views.django_mail).send_mail(subject=any(), message=any(),
-                                            from_email=any(),
-                                            recipient_list=any(),
-                                            fail_silently=any())
-
-
 class ChangePasswordViewTests(TestCase):
     ''' tests for the change password view '''
     fixtures = ['users_groups_perms.json']
@@ -181,7 +161,7 @@ class RequestResetPasswordTests(TestCase):
     def setUp(self):
         ''' set up test '''
         self.result = {}
-        when(views).send_email_to_user(any(), any(), any()).thenReturn(None)
+        when(views.user_service).send_email_to_user(any(), any(), any()).thenReturn(None)
         when(views.user_service).request_password_reset(any()).thenReturn(self.result)
 
     def tearDown(self):
@@ -217,7 +197,7 @@ class RequestResetPasswordTests(TestCase):
                                     data=json.dumps({"email": "mf_test@test.com"}))
         self.assertEquals(response.status_code, 400)
         self.assertEquals(response.content, "test fail status")
-        verify(views, times=0).send_email_to_user(any(), any(), any())
+        verify(views.user_service, times=0).send_email_to_user(any(), any(), any())
 
     def test_post_success(self):
         ''' 200 returned, send email invoked when user service succeeds '''
@@ -228,7 +208,7 @@ class RequestResetPasswordTests(TestCase):
                                     data=json.dumps({"email": "mf_test@test.com"}))
         self.assertEquals(response.status_code, 200)
         self.assertIn("Emailed password reset link", response.content)
-        verify(views, times=1).send_email_to_user(any(), any(), any())
+        verify(views.user_service, times=1).send_email_to_user(any(), any(), any())
 
 
 class ResetPasswordTests(TestCase):
