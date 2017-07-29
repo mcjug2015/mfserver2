@@ -105,6 +105,15 @@ def sudo_refresh_local():
     sudo_reboot_all()
 
 
+def sudo_ensure_uwsgi_nginx_socket_dir():
+    '''
+        latest centos 7 with gnome seems to chew up socket folder on occasion,
+        making sure its there.
+    '''
+    local('sudo mkdir -p /var/run/mfserver2')
+    local('sudo chown -R reg_user:reg_user /var/run/mfserver2')
+
+
 def sudo_update_ngnix_confs():
     local('sudo cp conf/nginx/nginx.conf /etc/nginx/')
     local('sudo cp conf/nginx/mfserver2.conf /etc/nginx/conf.d/')
@@ -129,6 +138,7 @@ def sudo_reboot_all():
     with warn_only():
         local('sudo systemctl stop nginx')
         local('sudo systemctl stop uwsgi')
+    sudo_ensure_uwsgi_nginx_socket_dir()
     local('sudo systemctl start uwsgi')
     local('sudo systemctl start nginx')
 
