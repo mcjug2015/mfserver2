@@ -40,3 +40,4 @@ py-packages:
       - virtualenv==15.0.3
     - require:
       - pkg: yum-packages
+    - reload_modules: true
