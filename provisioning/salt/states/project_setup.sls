@@ -5,7 +5,7 @@ venv:
     - requirements: salt://mfserver2_copy/dependencies/pip/initial.txt
     - require:
       - cmd: reload_firewalld
-      - pip: py-packages
+      - pkg: yum-packages
       - file: root_folder
 
 
