@@ -10,11 +10,19 @@
       - salt://mfserver2_copy/provisioning/conf/selinux/selinux_config
 
 
+# hopefully this fixes digital ocean boxes not seeing pyopenssl when do_cert comes around
+pip_open_ssl_hack:
+  cmd.run:
+    - name: pip install pyOpenSSL
+    - require:
+      - pip: py-packages
+    - reload_modules: true
+
 do_cert:
   module.run:
     - name: tls.create_self_signed_cert
     - require:
-      - pip: py-packages
+      - cmd: pip_open_ssl_hack
     - CN: {{pillar['ip_hostname']}}
     - ST: "MD"
     - L: "Rockville"

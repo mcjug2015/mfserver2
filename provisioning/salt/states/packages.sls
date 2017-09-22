@@ -36,8 +36,6 @@ py-packages:
   pip.installed:
     - pkgs:
       - six==1.10.0
-      - pyOpenSSL==16.0.0
       - virtualenv==15.0.3
     - require:
       - pkg: yum-packages
-    - reload_modules: true
