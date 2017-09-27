@@ -26,24 +26,24 @@ class TestUserCreation(TestCase):
 
     def test_registration_roundtrip(self):
         ''' make sure we can register a user and submit/get meetings with him '''
-        self.assertEquals(UserConfirmation.objects.all().count(), 0)
+        self.assertEqual(UserConfirmation.objects.all().count(), 0)
         response = self.client.post("/mfserver2/register/",
                                     content_type='application/json',
                                     data=json.dumps({"email": "test1234@test.com",
                                                      "password": "fake123"}))
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         verify(views.user_service.django_mail).send_mail(subject=any(), message=any(),
                                                          from_email=any(),
                                                          recipient_list=any(),
                                                          fail_silently=any())
         conf = UserConfirmation.objects.get(user__email='test1234@test.com')
         response = self.client.get("/mfserver2/register/", {"confirmation": conf.confirmation_key})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.login(username='test1234@test.com', password='fake123')
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 0)
+        self.assertEqual(resp_obj['meta']['total_count'], 0)
         user_pk = User.objects.get(email='test1234@test.com').pk
         meeting_obj = {"geo_location": {"coordinates": ['-77.0', '39.0'], "type": "Point"},
                        "name": "roundtrip meeting",
@@ -58,11 +58,11 @@ class TestUserCreation(TestCase):
         response = self.client.post('/mfserver2/api/v1/savemeeting/',
                                     json.dumps(meeting_obj),
                                     content_type='application/json')
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 1)
+        self.assertEqual(resp_obj['meta']['total_count'], 1)
 
 
 class PasswordResetTest(TestCase):
@@ -73,18 +73,18 @@ class PasswordResetTest(TestCase):
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
                                     data=json.dumps({"email": "mf_admin"}))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         conf = UserConfirmation.objects.get(user__username='mf_admin')
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": conf.confirmation_key})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         conf_str = BeautifulSoup(response.content,
                                  'html.parser').find_all('input')[2].attrs['value']
         response = self.client.post("/mfserver2/reset_password/",
                                     data={"reset_conf": conf_str,
                                           "password": "abc123",
                                           "retype_password": "abc123"})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.login(username='mf_admin', password='abc123')
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)

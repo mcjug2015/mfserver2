@@ -13,9 +13,9 @@ class StrReprTests(TestCase):
         user = User(username="test user")
         conf = UserConfirmation(conf_type="test type",
                                 user=user)
-        self.assertEquals(str(conf), "test type(test user)")
-        self.assertEquals(str(MeetingType(name="qq", short_name="q")), "q(qq)")
+        self.assertEqual(str(conf), "test type(test user)")
+        self.assertEqual(str(MeetingType(name="qq", short_name="q")), "q(qq)")
         meeting = Meeting(name="a", creator=user)
-        self.assertEquals(str(meeting), "a(test user)")
+        self.assertEqual(str(meeting), "a(test user)")
         not_there = MeetingNotThere(pk=7, request_host="7")
-        self.assertEquals(str(not_there), "7, host: 7")
+        self.assertEqual(str(not_there), "7, host: 7")

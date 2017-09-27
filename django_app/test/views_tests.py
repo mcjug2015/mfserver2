@@ -27,7 +27,7 @@ class RegisterUserViewTests(TestCase):
         when(views.user_service).complete_user_registration(any()).thenReturn({"code": 200,
                                                                                "status": "test"})
         response = self.client.get("/mfserver2/register/", {"confirmation": "test_conf"})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         verify(views.user_service).complete_user_registration(any())
 
     def test_post_success(self):
@@ -39,7 +39,7 @@ class RegisterUserViewTests(TestCase):
                                     content_type='application/json',
                                     data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         verify(views.user_service).send_email_to_user(any(), any(), any())
 
     def test_post_fail(self):
@@ -50,7 +50,7 @@ class RegisterUserViewTests(TestCase):
                                     content_type='application/json',
                                     data=json.dumps({"email": "mf_test@test.com",
                                                      "password": "fake123"}))
-        self.assertEquals(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
         verify(views.user_service, times=0).send_email_to_user(any(), any(), any())
 
 
@@ -64,10 +64,10 @@ class LoginAsyncTests(TestCase):
         response = self.client.post('/mfserver2/login_async/',
                                     content_type='application/json',
                                     data=json.dumps(json_input))
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status_code'], 403)
-        self.assertEquals(resp_obj['status'], 'wrong u/p or inactive user')
+        self.assertEqual(resp_obj['status_code'], 403)
+        self.assertEqual(resp_obj['status'], 'wrong u/p or inactive user')
 
     def test_inactive_user(self):
         ''' verify that we get a 403 when an inactive user tries to login '''
@@ -78,10 +78,10 @@ class LoginAsyncTests(TestCase):
         response = self.client.post('/mfserver2/login_async/',
                                     content_type='application/json',
                                     data=json.dumps(json_input))
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status_code'], 403)
-        self.assertEquals(resp_obj['status'], 'wrong u/p or inactive user')
+        self.assertEqual(resp_obj['status_code'], 403)
+        self.assertEqual(resp_obj['status'], 'wrong u/p or inactive user')
 
     def test_success(self):
         ''' verify that we get a 200 with good creds '''
@@ -89,10 +89,10 @@ class LoginAsyncTests(TestCase):
         response = self.client.post('/mfserver2/login_async/',
                                     content_type='application/json',
                                     data=json.dumps(json_input))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status_code'], 200)
-        self.assertEquals(resp_obj['status'], 'good to go')
+        self.assertEqual(resp_obj['status_code'], 200)
+        self.assertEqual(resp_obj['status'], 'good to go')
 
 
 class LogoutAsyncTests(TestCase):
@@ -102,19 +102,19 @@ class LogoutAsyncTests(TestCase):
     def test_success(self):
         ''' make sure logout_async truly logs the user out. '''
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         self.client.login(username='test_user', password='testing123')
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         response = self.client.get('/mfserver2/logout_async/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['status'], 'logout success')
+        self.assertEqual(resp_obj['status'], 'logout success')
 
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
 
 class IndexViewTests(TestCase):
@@ -123,7 +123,7 @@ class IndexViewTests(TestCase):
     def test_get(self):
         ''' test accessing the index view '''
         response = self.client.get('/mfserver2/welcome/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Welcome to meeting finder server 2", response.content)
 
 
@@ -138,7 +138,7 @@ class ChangePasswordViewTests(TestCase):
                                     content_type='application/json',
                                     data=json.dumps({'old_password': "wrong",
                                                      'new_password': "irrelevant"}))
-        self.assertEquals(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
 
     def test_success(self):
         ''' make sure successful password change logs user out '''
@@ -147,12 +147,12 @@ class ChangePasswordViewTests(TestCase):
                                     content_type='application/json',
                                     data=json.dumps({'old_password': "testing123",
                                                      'new_password': "1234abcd"}))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.client.login(username='test_user', password='1234abcd')
         response = self.client.get('/admin/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
 
 class RequestResetPasswordTests(TestCase):
@@ -172,7 +172,7 @@ class RequestResetPasswordTests(TestCase):
         ''' http forbidden if conf with given key not found '''
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": "i_do_not_exist"})
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_get_success(self):
         ''' make sure view with username name confirmation key gets returned on get '''
@@ -182,7 +182,7 @@ class RequestResetPasswordTests(TestCase):
         user_conf.save()
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": "testing456"})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Reset password for mf_admin", response.content)
         self.assertIn("testing456", response.content)
         self.assertNotIn("Passwords did not match", response.content)
@@ -195,8 +195,8 @@ class RequestResetPasswordTests(TestCase):
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
                                     data=json.dumps({"email": "mf_test@test.com"}))
-        self.assertEquals(response.status_code, 400)
-        self.assertEquals(response.content, "test fail status")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, "test fail status")
         verify(views.user_service, times=0).send_email_to_user(any(), any(), any())
 
     def test_post_success(self):
@@ -206,7 +206,7 @@ class RequestResetPasswordTests(TestCase):
         response = self.client.post("/mfserver2/reset_password_request/",
                                     content_type='application/json',
                                     data=json.dumps({"email": "mf_test@test.com"}))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Emailed password reset link", response.content)
         verify(views.user_service, times=1).send_email_to_user(any(), any(), any())
 
@@ -228,7 +228,7 @@ class ResetPasswordTests(TestCase):
         ''' http forbidden if conf not found '''
         response = self.client.post("/mfserver2/reset_password/",
                                     data={"reset_conf": "i_do_not_exist"})
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_invalid_password(self):
         ''' page with error message when passwords not matching or less than 6 characters '''
@@ -236,7 +236,7 @@ class ResetPasswordTests(TestCase):
                                     data={"reset_conf": "testing456",
                                           "password": "abc",
                                           "retype_password": "123"})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Passwords did not match", response.content)
         self.assertIn("Password must be longer than 6 characters", response.content)
 
@@ -247,7 +247,7 @@ class ResetPasswordTests(TestCase):
                                     data={"reset_conf": "testing456",
                                           "password": "abc123",
                                           "retype_password": "abc123"})
-        self.assertEquals(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
         self.assertIn("fail", response.content)
 
     def test_success(self):
@@ -257,5 +257,5 @@ class ResetPasswordTests(TestCase):
                                     data={"reset_conf": "testing456",
                                           "password": "abc123",
                                           "retype_password": "abc123"})
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("Successfully", response.content)

@@ -42,8 +42,7 @@ class UserObjectsAuthorizationTests(TestCase):
         the_bundle.request.user = mock()
         the_bundle.request.user.pk = 2
         self.assertFalse(self.the_auth.read_detail(None, the_bundle))
-        self.assertEquals(len(list(self.the_auth.read_list(User.objects.filter(pk=1), the_bundle))),
-                          0)
+        self.assertEqual(len(list(self.the_auth.read_list(User.objects.filter(pk=1), the_bundle))), 0)
 
     def test_read_good(self):
         '''
@@ -96,12 +95,12 @@ class OwnerObjectsOnlyAuthorizationTests(TestCase):
         ''' verify that list gets filtered by owner for methods limiting a list '''
         self.the_bundle.request.user = User.objects.get(pk=2)
         object_list = Meeting.objects.all()
-        self.assertEquals(0, len(list(self.the_auth.read_list(object_list, self.the_bundle))))
-        self.assertEquals(0, len(list(self.the_auth.create_list(object_list, self.the_bundle))))
-        self.assertEquals(0, len(list(self.the_auth.update_list(object_list, self.the_bundle))))
-        self.assertEquals(0, len(list(self.the_auth.delete_list(object_list, self.the_bundle))))
+        self.assertEqual(0, len(list(self.the_auth.read_list(object_list, self.the_bundle))))
+        self.assertEqual(0, len(list(self.the_auth.create_list(object_list, self.the_bundle))))
+        self.assertEqual(0, len(list(self.the_auth.update_list(object_list, self.the_bundle))))
+        self.assertEqual(0, len(list(self.the_auth.delete_list(object_list, self.the_bundle))))
         self.the_bundle.request.user = User.objects.get(pk=1)
-        self.assertEquals(2, len(list(self.the_auth.read_list(object_list, self.the_bundle))))
-        self.assertEquals(2, len(list(self.the_auth.create_list(object_list, self.the_bundle))))
-        self.assertEquals(2, len(list(self.the_auth.update_list(object_list, self.the_bundle))))
-        self.assertEquals(2, len(list(self.the_auth.delete_list(object_list, self.the_bundle))))
+        self.assertEqual(2, len(list(self.the_auth.read_list(object_list, self.the_bundle))))
+        self.assertEqual(2, len(list(self.the_auth.create_list(object_list, self.the_bundle))))
+        self.assertEqual(2, len(list(self.the_auth.update_list(object_list, self.the_bundle))))
+        self.assertEqual(2, len(list(self.the_auth.delete_list(object_list, self.the_bundle))))
