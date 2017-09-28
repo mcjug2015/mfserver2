@@ -1,5 +1,5 @@
 ''' service module for auth related stuff '''
-from urlparse import urlparse
+from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 

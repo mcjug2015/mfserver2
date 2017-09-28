@@ -66,7 +66,7 @@ class CigarShopAdminTests(TestCase):
         db_field = mock()
         db_field.name = 'testing'
         retval = self.the_admin.formfield_for_dbfield(db_field, request=mock())
-        self.assertNotEquals(type(retval), admin.LatLongField)
+        self.assertNotEqual(type(retval), admin.LatLongField)
 
     def test_formfield_dbfield_location(self):
         ''' make sure a field named location gets a latlongfield returned '''
