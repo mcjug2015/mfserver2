@@ -42,7 +42,7 @@ class TestUserCreation(TestCase):
         self.client.login(username='test1234@test.com', password='fake123')
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
         self.assertEqual(response.status_code, 200)
-        resp_obj = json.loads(response.content)
+        resp_obj = json.loads(response.content.decode('utf8'))
         self.assertEqual(resp_obj['meta']['total_count'], 0)
         user_pk = User.objects.get(email='test1234@test.com').pk
         meeting_obj = {"geo_location": {"coordinates": ['-77.0', '39.0'], "type": "Point"},
@@ -61,7 +61,7 @@ class TestUserCreation(TestCase):
         self.assertEqual(response.status_code, 201)
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
         self.assertEqual(response.status_code, 200)
-        resp_obj = json.loads(response.content)
+        resp_obj = json.loads(response.content.decode('utf8'))
         self.assertEqual(resp_obj['meta']['total_count'], 1)
 
 
@@ -78,7 +78,7 @@ class PasswordResetTest(TestCase):
         response = self.client.get("/mfserver2/reset_password_request/",
                                    {"confirmation": conf.confirmation_key})
         self.assertEqual(response.status_code, 200)
-        conf_str = BeautifulSoup(response.content,
+        conf_str = BeautifulSoup(response.content.decode('utf8'),
                                  'html.parser').find_all('input')[2].attrs['value']
         response = self.client.post("/mfserver2/reset_password/",
                                     data={"reset_conf": conf_str,

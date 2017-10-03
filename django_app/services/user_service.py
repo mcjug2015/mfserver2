@@ -102,7 +102,7 @@ def reset_password(conf, password):
 def create_conf(user, conf_type):
     ''' create a user confirmation '''
     user_confirmation = UserConfirmation(user=user, conf_type=conf_type)
-    user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.letters)
+    user_confirmation.confirmation_key = ''.join([random.choice(string.digits + string.ascii_letters)
                                                   for i in range(0, 64)])  # pylint: disable=unused-variable
     return user_confirmation
 
