@@ -22,12 +22,12 @@ class GetUserToRegisterTests(TestCase):
         user.is_active = False
         user.save()
         result = user_service.get_user_to_register("mf_admin")
-        self.assertEquals(result.username, "mf_admin")
+        self.assertEqual(result.username, "mf_admin")
 
     def test_new_user(self):
         ''' test getting a new user back '''
         result = user_service.get_user_to_register("test@mooo.com")
-        self.assertEquals(result.email, "test@mooo.com")
+        self.assertEqual(result.email, "test@mooo.com")
 
 
 class CreateUserAnConfTests(TestCase):
@@ -39,28 +39,28 @@ class CreateUserAnConfTests(TestCase):
 
     def test_no_user(self):
         ''' make sure nothing happens if user should not be registered '''
-        self.assertEquals(User.objects.all().count(), 1)
-        self.assertEquals(UserConfirmation.objects.all().count(), 0)
+        self.assertEqual(User.objects.all().count(), 1)
+        self.assertEqual(UserConfirmation.objects.all().count(), 0)
         when(user_service).get_user_to_register(any()).thenReturn(None)
         result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
-        self.assertEquals(User.objects.all().count(), 1)
-        self.assertEquals(UserConfirmation.objects.all().count(), 0)
-        self.assertEquals(result["status"], "Active user with email test1234@test.com already exists")
+        self.assertEqual(User.objects.all().count(), 1)
+        self.assertEqual(UserConfirmation.objects.all().count(), 0)
+        self.assertEqual(result["status"], "Active user with email test1234@test.com already exists")
 
     def test_success(self):
         ''' make sure method successfully creates user and conf '''
-        self.assertEquals(User.objects.all().count(), 1)
-        self.assertEquals(UserConfirmation.objects.all().count(), 0)
+        self.assertEqual(User.objects.all().count(), 1)
+        self.assertEqual(UserConfirmation.objects.all().count(), 0)
         user = User(pk=1000, username='test1234@test.com', email='test1234@test.com',
                     first_name='NOT_SET', last_name='NOT_SET',
                     is_active=False, is_superuser=False, is_staff=False)
         when(user_service).get_user_to_register(any()).thenReturn(user)
         result = user_service.create_user_and_conf('test1234@test.com', 'mooo1')
-        self.assertEquals(User.objects.all().count(), 2)
-        self.assertEquals(UserConfirmation.objects.all().count(), 1)
-        self.assertEquals(result["user"].username, 'test1234@test.com')
-        self.assertEquals(len(result["conf"].confirmation_key), 64)
-        self.assertEquals(result["conf"].conf_type, "registration")
+        self.assertEqual(User.objects.all().count(), 2)
+        self.assertEqual(UserConfirmation.objects.all().count(), 1)
+        self.assertEqual(result["user"].username, 'test1234@test.com')
+        self.assertEqual(len(result["conf"].confirmation_key), 64)
+        self.assertEqual(result["conf"].conf_type, "registration")
 
 
 class CompleteUserRegistration(TestCase):
@@ -73,9 +73,9 @@ class CompleteUserRegistration(TestCase):
     def test_fail_no_conf(self):
         ''' make sure method fails if no conf exists with the str passed in '''
         result = user_service.complete_user_registration("wrong")
-        self.assertEquals(result["status"],
-                          "Confirmation ivalid, used or expired, unable to complete user registration")
-        self.assertEquals(User.objects.filter(is_active=True).count(), 0)
+        self.assertEqual(result["status"],
+                         "Confirmation ivalid, used or expired, unable to complete user registration")
+        self.assertEqual(User.objects.filter(is_active=True).count(), 0)
 
     def test_success(self):
         ''' test successfull registration completion '''
@@ -85,7 +85,7 @@ class CompleteUserRegistration(TestCase):
         user_confirmation.save()
         result = user_service.complete_user_registration("right")
         self.assertIn("Successfully completed registration for", result["status"])
-        self.assertEquals(User.objects.filter(is_active=True).count(), 1)
+        self.assertEqual(User.objects.filter(is_active=True).count(), 1)
 
 
 class RequestPasswordResetTests(TestCase):
@@ -109,9 +109,8 @@ class RequestPasswordResetTests(TestCase):
     def test_success(self):
         ''' existing, active user able to get reset password conf '''
         retval = user_service.request_password_reset("mf_admin")
-        self.assertEquals(retval["conf"].user.username, "mf_admin")
-        self.assertEquals(User.objects.get(username="mf_admin").confirmations.all()[0:1][0].conf_type,
-                          "password_reset")
+        self.assertEqual(retval["conf"].user.username, "mf_admin")
+        self.assertEqual(User.objects.get(username="mf_admin").confirmations.all()[0:1][0].conf_type, "password_reset")
         self.assertIn("successful password reset", retval["status"])
 
 

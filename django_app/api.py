@@ -31,7 +31,7 @@ class ExceptionThrowingModelResource(ModelResource):
             return HttpResponseNotFound()
         else:
             LOGGER.error('Something went wrong in tastypie, details below')
-            LOGGER.exception(exception)
+            LOGGER.error(exception)
             raise exception
 
 

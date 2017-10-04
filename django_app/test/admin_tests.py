@@ -20,13 +20,13 @@ class LatLongWidgetTests(TestCase):
         the_value = mock()
         the_value.coords = [1, 2]
         retval = self.widget.decompress(the_value)
-        self.assertEquals(retval[0], 2)
-        self.assertEquals(retval[1], 1)
+        self.assertEqual(retval[0], 2)
+        self.assertEqual(retval[1], 1)
 
     def test_decompress_no_value(self):
         ''' verify that decompressing a falsy value returns a tuple of nones '''
-        self.assertEquals(self.widget.decompress([]), (None, None))
-        self.assertEquals(self.widget.decompress(None), (None, None))
+        self.assertEqual(self.widget.decompress([]), (None, None))
+        self.assertEqual(self.widget.decompress(None), (None, None))
 
 
 class LatLongFieldTests(TestCase):
@@ -39,12 +39,12 @@ class LatLongFieldTests(TestCase):
     def test_compress_success(self):
         ''' make sure good data produces a valid point string '''
         retval = self.the_field.compress([1, 2])
-        self.assertEquals(retval, 'SRID=4326;POINT(2.000000 1.000000)')
+        self.assertEqual(retval, 'SRID=4326;POINT(2.000000 1.000000)')
 
     def test_compress_no_data(self):
         ''' verify that non or empty list returns none '''
-        self.assertEquals(self.the_field.compress(None), None)
-        self.assertEquals(self.the_field.compress([]), None)
+        self.assertEqual(self.the_field.compress(None), None)
+        self.assertEqual(self.the_field.compress([]), None)
 
     def test_compress_validation_error(self):
         ''' verify that one of the first two values beeing blanky raises validation '''
@@ -66,14 +66,14 @@ class CigarShopAdminTests(TestCase):
         db_field = mock()
         db_field.name = 'testing'
         retval = self.the_admin.formfield_for_dbfield(db_field, request=mock())
-        self.assertNotEquals(type(retval), admin.LatLongField)
+        self.assertNotEqual(type(retval), admin.LatLongField)
 
     def test_formfield_dbfield_location(self):
         ''' make sure a field named location gets a latlongfield returned '''
         db_field = mock()
         db_field.name = 'geo_location'
         retval = self.the_admin.formfield_for_dbfield(db_field, request=mock())
-        self.assertEquals(type(retval), admin.LatLongField)
+        self.assertEqual(type(retval), admin.LatLongField)
 
 
 class MeetingNotThereAdminTests(TestCase):
@@ -90,7 +90,7 @@ class MeetingNotThereAdminTests(TestCase):
         when(request).get_full_path().thenReturn("http://www.testing.org")
         queryset = MeetingNotThere.objects.filter(meeting__name='awesome meeting')
         retval = self.admin.deactivate_resolve(request, queryset)
-        self.assertEquals(retval['Location'], "http://www.testing.org")
+        self.assertEqual(retval['Location'], "http://www.testing.org")
         not_there = MeetingNotThere.objects.get(meeting__name='awesome meeting')
         self.assertTrue(not_there.resolved)
         self.assertFalse(not_there.meeting.is_active)

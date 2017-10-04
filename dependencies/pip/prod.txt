@@ -1,4 +1,4 @@
-fabric
+fabric3
 Django
 psycopg2
 django-tastypie

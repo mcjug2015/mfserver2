@@ -12,7 +12,7 @@ class RefererTokenSessionHelperTests(TestCase):
     def test_get_referer(self):
         ''' test the get referer method '''
         helper = auth_service.RefererTokenSessionHelper(None, None, "https://www.test.com/test123/", None)
-        self.assertEquals("https://www.test.com", helper.get_referer())
+        self.assertEqual("https://www.test.com", helper.get_referer())
 
     def test_get_token_session(self):
         ''' test the get token session method '''
@@ -29,5 +29,5 @@ class RefererTokenSessionHelperTests(TestCase):
                                          cookies=any(), json=any(),
                                          verify=False).thenReturn(post_response)
         token, session_id = helper.get_token_session()
-        self.assertEquals(token, "token1")
-        self.assertEquals(session_id, "session_id")
+        self.assertEqual(token, "token1")
+        self.assertEqual(session_id, "session_id")

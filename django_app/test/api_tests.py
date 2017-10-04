@@ -28,14 +28,14 @@ class MeetingTests(TestCase):
             verify that invoking build filters and passing in nothing returns an
             empty dict
         '''
-        self.assertEquals(self.the_resource.build_filters(), {})
+        self.assertEqual(self.the_resource.build_filters(), {})
 
     def test_build_filters_existing(self):
         '''
             make sure existing filters that dont have lat, long, and distance in them
             have default tastypie behavior
         '''
-        self.assertEquals(self.the_resource.build_filters({'test': 'test'}), {})
+        self.assertEqual(self.the_resource.build_filters({'test': 'test'}), {})
 
     def test_build_filters_location(self):
         '''
@@ -46,14 +46,14 @@ class MeetingTests(TestCase):
                                                   'long': 1,
                                                   'distance': 1})
         self.assertIn('custom', retval)
-        self.assertEquals(retval['custom'].__class__.__name__, 'Q')
+        self.assertEqual(retval['custom'].__class__.__name__, 'Q')
 
     def test_apply_filters_empty(self):
         '''
             Make sure default tastypie behaviour occurs when no custom filter is passed in
         '''
         retval = self.the_resource.apply_filters(None, {})
-        self.assertEquals(retval.count(), 2)
+        self.assertEqual(retval.count(), 2)
 
     def test_apply_filters_custom(self):
         '''
@@ -62,15 +62,15 @@ class MeetingTests(TestCase):
         pnt = fromstr('POINT(%s %s)' % (-77, 39), srid=4326)
         the_dict = {'custom': Q(geo_location__distance_lte=(pnt, D(mi=0.1)))}
         retval = self.the_resource.apply_filters(None, the_dict)
-        self.assertEquals(retval.count(), 1)
+        self.assertEqual(retval.count(), 1)
 
     def test_apply_sorting_empty(self):
         '''
             Make sure default tastypie behaviour occurs when no custom filter is passed in
         '''
         retval = self.the_resource.apply_sorting(Meeting.objects.all(), {})
-        self.assertEquals(retval.count(), 2)
-        self.assertEquals(retval[0].name, 'awesome meeting')
+        self.assertEqual(retval.count(), 2)
+        self.assertEqual(retval[0].name, 'awesome meeting')
 
     def test_apply_sorting(self):
         '''
@@ -79,8 +79,8 @@ class MeetingTests(TestCase):
         retval = self.the_resource.apply_sorting(Meeting.objects.all(),
                                                  {'lat': 39.1, 'long': -77.1, 'distance': 1000,
                                                   'order_by': 'distance'})
-        self.assertEquals(retval.count(), 2)
-        self.assertEquals(retval[0].name, 'another awesome meeting')
+        self.assertEqual(retval.count(), 2)
+        self.assertEqual(retval[0].name, 'another awesome meeting')
 
 
 class SaveMeetingTests(TestCase):
@@ -102,7 +102,7 @@ class SaveMeetingTests(TestCase):
         bundle.obj = Meeting()
         when(ModelResource).full_hydrate(any()).thenReturn(bundle)
         SaveMeetingResource().full_hydrate(bundle)
-        self.assertEquals(bundle.obj.creator.username, "test123")
+        self.assertEqual(bundle.obj.creator.username, "test123")
 
 
 class ExceptionThrowingModelResourceTests(TestCase):
@@ -187,7 +187,7 @@ class MeetingNotThereResourceTests(TestCase):
         ''' writes the special fields to object '''
         self.bundle.request.user = User.objects.get(username="mf_admin")
         retval = self.resource.full_hydrate(self.bundle)
-        self.assertEquals(retval.obj.user.username, "mf_admin")
+        self.assertEqual(retval.obj.user.username, "mf_admin")
 
     def test_full_hydrate_no_user(self):
         ''' writes special fields with no logged in user '''
@@ -195,5 +195,5 @@ class MeetingNotThereResourceTests(TestCase):
         when(self.bundle.request.user).is_authenticated().thenReturn(False)
         retval = self.resource.full_hydrate(self.bundle)
         self.assertIsNone(retval.obj.user)
-        self.assertEquals(retval.obj.request_host, "a")
-        self.assertEquals(retval.obj.user_agent, "b")
+        self.assertEqual(retval.obj.request_host, "a")
+        self.assertEqual(retval.obj.user_agent, "b")

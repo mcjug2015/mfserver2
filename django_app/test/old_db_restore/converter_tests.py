@@ -62,15 +62,15 @@ class MeetingTypeConverterTests(TestCase):
 
     def test_get_sql(self):
         ''' make sure the right sql is returned '''
-        self.assertEquals("select id, short_name, name, description from aabuddy_meetingtype",
-                          converter.MeetingTypeConverter.get_sql())
+        self.assertEqual("select id, short_name, name, description from aabuddy_meetingtype",
+                         converter.MeetingTypeConverter.get_sql())
 
     def test_collect_id(self):
         ''' collect id saves the id '''
         old_item = {"id": "1"}
-        self.assertEquals(len(self.converter.ids), 0)
+        self.assertEqual(len(self.converter.ids), 0)
         self.converter.collect_id(old_item)
-        self.assertEquals(len(self.converter.ids), 1)
+        self.assertEqual(len(self.converter.ids), 1)
 
     def test_collect_item(self):
         ''' make sure convert one creates expected meeting type entry in mfserver2 db '''
@@ -78,13 +78,13 @@ class MeetingTypeConverterTests(TestCase):
                     "short_name": "a",
                     "name": "b",
                     "description": "c"}
-        self.assertEquals(len(self.converter.new_objs), 0)
+        self.assertEqual(len(self.converter.new_objs), 0)
         self.converter.collect_item(old_item)
-        self.assertEquals(len(self.converter.new_objs), 1)
+        self.assertEqual(len(self.converter.new_objs), 1)
 
     def test_get_manager(self):
         ''' manage is meetingtype manager '''
-        self.assertEquals(self.converter.get_manager().model.__name__, 'MeetingType')
+        self.assertEqual(self.converter.get_manager().model.__name__, 'MeetingType')
 
 
 class UserConverterTests(TestCase):
@@ -112,13 +112,13 @@ class UserConverterTests(TestCase):
                     "is_staff": False,
                     "is_active": False,
                     "date_joined": "2014-01-11 14:43:15.812485-05"}
-        self.assertEquals(len(self.converter.new_objs), 0)
+        self.assertEqual(len(self.converter.new_objs), 0)
         self.converter.collect_item(old_item)
-        self.assertEquals(len(self.converter.new_objs), 1)
+        self.assertEqual(len(self.converter.new_objs), 1)
 
     def test_get_manager(self):
         ''' manage is meetingtype manager '''
-        self.assertEquals(self.converter.get_manager().model.__name__, 'User')
+        self.assertEqual(self.converter.get_manager().model.__name__, 'User')
 
 
 class MeetingConverterTests(TestCase):
@@ -135,7 +135,7 @@ class MeetingConverterTests(TestCase):
 
     def test_get_manager(self):
         ''' manage is meetingtype manager '''
-        self.assertEquals(self.converter.get_manager().model.__name__, 'Meeting')
+        self.assertEqual(self.converter.get_manager().model.__name__, 'Meeting')
 
     def test_convert_one(self):
         ''' make sure convert one creates expected meeting type entry in mfserver2 db '''
@@ -149,9 +149,9 @@ class MeetingConverterTests(TestCase):
                     "address": "mooo",
                     "created_date": "2013-12-21 12:40:38.334359-05",
                     "st_astext": "POINT(-121.2717698 38.1397487)"}
-        self.assertEquals(len(self.converter.new_objs), 0)
+        self.assertEqual(len(self.converter.new_objs), 0)
         self.converter.collect_item(old_item)
-        self.assertEquals(len(self.converter.new_objs), 1)
+        self.assertEqual(len(self.converter.new_objs), 1)
 
 
 class MeetingToTypeConverterTests(TestCase):
@@ -168,13 +168,13 @@ class MeetingToTypeConverterTests(TestCase):
 
     def test_get_manager(self):
         ''' manage is meetingtype manager '''
-        self.assertEquals(self.converter.get_manager().model.__name__, 'Meeting_types')
+        self.assertEqual(self.converter.get_manager().model.__name__, 'Meeting_types')
 
     def test_convert_one(self):
         ''' make sure convert one creates expected meeting type entry in mfserver2 db '''
         old_item = {"id": "500000",
                     "meeting_id": "1",
                     "meetingtype_id": "1"}
-        self.assertEquals(len(self.converter.new_objs), 0)
+        self.assertEqual(len(self.converter.new_objs), 0)
         self.converter.collect_item(old_item)
-        self.assertEquals(len(self.converter.new_objs), 1)
+        self.assertEqual(len(self.converter.new_objs), 1)
