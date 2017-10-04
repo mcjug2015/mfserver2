@@ -31,7 +31,7 @@ pg_repo: https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/
 pg_server_name: postgresql96-server
 pg_server_unit_name: postgresql-9.6
 pg_devel_name: postgresql96-devel
-postgis_name: postgis2_96
+postgis_name: postgis24_96
 postgis_version: 2.1.8-1.rhel7
 pg_setup_path: /usr/pgsql-9.6/bin/postgresql96-setup
 pg_data_path: /var/lib/pgsql/9.6/data/

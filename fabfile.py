@@ -85,7 +85,8 @@ def sudo_docker_provision():
     local("""sudo docker exec %s tar -xzf /root/mfserver2.tar.gz -C /tmp/mfserver2""" % container_id)
     local("""sudo docker exec -t %s sh /tmp/mfserver2/provisioning/misc/do_salt.sh""" % container_id)
     local("""curl -f -k https://127.0.0.1/mfserver2/welcome/""")
-    #sudo_docker_stop_remove()
+    # sudo_docker_stop_remove()
+    pass
 
 
 def sudo_docker_stop_remove():
