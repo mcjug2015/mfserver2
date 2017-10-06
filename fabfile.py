@@ -63,8 +63,8 @@ def precommit():
 def sudo_update_static_files():
     local('sudo rm -rf /opt/mfserver2/static/')
     local('sudo mkdir -p /opt/mfserver2/static/')
-    local('sudo cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/admin/static/admin /opt/mfserver2/static/')
-    local('sudo cp -r /opt/mfserver2/venv/lib/python2.7/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
+    local('sudo cp -r /opt/mfserver2/venv/lib/python3.4/site-packages/django/contrib/admin/static/admin /opt/mfserver2/static/')
+    local('sudo cp -r /opt/mfserver2/venv/lib/python3.4/site-packages/django/contrib/gis/static/gis /opt/mfserver2/static/')
     local('sudo chown -R reg_user:reg_user /opt/mfserver2/static/')
 
 
