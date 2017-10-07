@@ -16,8 +16,11 @@ class UserConfirmation(models.Model):
     conf_type = models.CharField(max_length=64, null=False, blank=False, default="registration")
 
     def __unicode__(self):
-        return u"%s(%s)" % (self.conf_type,
-                            self.user.username)
+        return "%s(%s)" % (self.conf_type,
+                           self.user.username)
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 class CigarShop(models.Model):
@@ -35,7 +38,10 @@ class MeetingType(models.Model):
     description = models.CharField(null=False, blank=False, max_length=250)
 
     def __unicode__(self):
-        return u"%s(%s)" % (self.short_name, self.name)
+        return "%s(%s)" % (self.short_name, self.name)
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 class Meeting(models.Model):
@@ -64,7 +70,10 @@ class Meeting(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __unicode__(self):
-        return u"%s(%s)" % (self.name, self.creator.username)
+        return "%s(%s)" % (self.name, self.creator.username)
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 class MeetingNotThere(models.Model):
@@ -80,4 +89,7 @@ class MeetingNotThere(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return u"%s, host: %s" % (str(self.pk), str(self.request_host))
+        return "%s, host: %s" % (str(self.pk), str(self.request_host))
+
+    def __str__(self):
+        return self.__unicode__()
