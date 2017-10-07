@@ -3,6 +3,7 @@ venv:
     - name: {{pillar['venv_folder']}}
     - user: {{pillar['regular_username']}}
     - requirements: salt://mfserver2_copy/dependencies/pip/initial.txt
+    - python: /usr/bin/python3
     - require:
       - cmd: reload_firewalld
       - pkg: yum-packages

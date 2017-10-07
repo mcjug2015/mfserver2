@@ -15,7 +15,7 @@ yum-packages:
       - net-tools
       - policycoreutils
       - uwsgi
-      - uwsgi-plugin-python
+      - uwsgi-plugin-python3
       - liberation-mono-fonts
       - liberation-narrow-fonts
       - liberation-sans-fonts

@@ -7,7 +7,10 @@
 /usr/bin/yum install -y gcc gcc-c++ libffi-devel python-devel openssl-devel
 /usr/bin/pip install six==1.10.0
 /usr/bin/pip install pyOpenSSL==16.0.0
-/usr/bin/pip install virtualenv==15.0.3
+
+/usr/bin/yum install -y python34-devel python34 python34-pip
+/usr/bin/pip3 install paramiko
+/usr/bin/pip3 install virtualenv
 
 
 #let salt have access to all the projects files

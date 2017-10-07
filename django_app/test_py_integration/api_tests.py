@@ -17,10 +17,10 @@ class MeetingResourceTests(TestCase):
         filter_str += "day_of_week__in=3&"
         filter_str += "lat=39.0&long=-77.0&distance=0.1&order_by=distance"
         response = self.client.get(filter_str)
-        self.assertEquals(response.status_code, 200)
-        resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 1)
-        self.assertEquals(resp_obj['objects'][0]['name'], 'awesome meeting')
+        self.assertEqual(response.status_code, 200)
+        resp_obj = json.loads(response.content.decode('utf8'))
+        self.assertEqual(resp_obj['meta']['total_count'], 1)
+        self.assertEqual(resp_obj['objects'][0]['name'], 'awesome meeting')
 
     def test_non_distance_sorting(self):
         ''' test filtering '''
@@ -28,10 +28,10 @@ class MeetingResourceTests(TestCase):
         filter_str = "/mfserver2/api/v1/meeting/?"
         filter_str += "lat=39.0&long=-77.0&distance=1000&order_by=-day_of_week"
         response = self.client.get(filter_str)
-        self.assertEquals(response.status_code, 200)
-        resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 2)
-        self.assertEquals(resp_obj['objects'][0]['name'], 'another awesome meeting')
+        self.assertEqual(response.status_code, 200)
+        resp_obj = json.loads(response.content.decode('utf8'))
+        self.assertEqual(resp_obj['meta']['total_count'], 2)
+        self.assertEqual(resp_obj['objects'][0]['name'], 'another awesome meeting')
 
 
 class SaveMeetingResourceTest(TestCase):
@@ -42,9 +42,9 @@ class SaveMeetingResourceTest(TestCase):
         ''' make sure posting a meeting works '''
         self.client.login(username='test_user', password='testing123')
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
-        self.assertEquals(response.status_code, 200)
-        resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 2)
+        self.assertEqual(response.status_code, 200)
+        resp_obj = json.loads(response.content.decode('utf8'))
+        self.assertEqual(resp_obj['meta']['total_count'], 2)
         meeting_obj = {"geo_location": {"coordinates": ['-77.0', '39.0'], "type": "Point"},
                        "name": "posted meeting",
                        "day_of_week": 7,
@@ -57,11 +57,11 @@ class SaveMeetingResourceTest(TestCase):
         response = self.client.post('/mfserver2/api/v1/savemeeting/',
                                     json.dumps(meeting_obj),
                                     content_type='application/json')
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         response = self.client.get('/mfserver2/api/v1/savemeeting/')
-        self.assertEquals(response.status_code, 200)
-        resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 3)
+        self.assertEqual(response.status_code, 200)
+        resp_obj = json.loads(response.content.decode('utf8'))
+        self.assertEqual(resp_obj['meta']['total_count'], 3)
 
 
 class MeetingNotThereResourceTests(TestCase):
@@ -76,10 +76,10 @@ class MeetingNotThereResourceTests(TestCase):
         response = self.client.post('/mfserver2/api/v1/meetingnotthere/',
                                     json.dumps(not_there_obj),
                                     content_type='application/json')
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         response = self.client.get('/mfserver2/api/v1/meetingnotthere/')
-        self.assertEquals(response.status_code, 200)
-        resp_obj = json.loads(response.content)
-        self.assertEquals(resp_obj['meta']['total_count'], 2)
-        self.assertEquals(resp_obj['objects'][1]['note'], "a")
-        self.assertEquals(resp_obj['objects'][1]['request_host'], "127.0.0.1")
+        self.assertEqual(response.status_code, 200)
+        resp_obj = json.loads(response.content.decode('utf8'))
+        self.assertEqual(resp_obj['meta']['total_count'], 2)
+        self.assertEqual(resp_obj['objects'][1]['note'], "a")
+        self.assertEqual(resp_obj['objects'][1]['request_host'], "127.0.0.1")

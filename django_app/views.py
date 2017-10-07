@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 
 def login_async(request):
     ''' get username and password from json request body, log user in '''
-    json_in = json.loads(request.body)
+    json_in = json.loads(request.body.decode('utf-8'))
     username = json_in['username']
     password = json_in['password']
     user = authenticate(username=username, password=password)
@@ -51,7 +51,7 @@ class RegisterUserView(View):
 
     def post(self, request):
         ''' register user with details provided '''
-        json_obj = json.loads(request.body)
+        json_obj = json.loads(request.body.decode('utf-8'))
         email = json_obj["email"]
         password = json_obj["password"]
         result = user_service.create_user_and_conf(email, password)
@@ -74,7 +74,7 @@ class ChangePasswordView(View):
 
     def post(self, request):
         ''' parse old and new password from request, change user password, sign him out '''
-        json_obj = json.loads(request.body)
+        json_obj = json.loads(request.body.decode('utf-8'))
         old_password = json_obj["old_password"]
         new_password = json_obj["new_password"]
         if not request.user.check_password(old_password):
@@ -103,7 +103,7 @@ class RequestResetPassword(View):
 
     def post(self, request):
         ''' generate reset conf for user and send email with reset link '''
-        json_obj = json.loads(request.body)
+        json_obj = json.loads(request.body.decode('utf-8'))
         email = json_obj["email"]
         result = user_service.request_password_reset(email)
         if result["conf"]:
