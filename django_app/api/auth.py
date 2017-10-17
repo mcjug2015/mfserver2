@@ -4,6 +4,48 @@ from tastypie.authorization import Authorization
 from tastypie.exceptions import Unauthorized
 
 
+class AdminAuthorization(Authorization):
+    ''' authorization that lets admin do everything '''
+
+    def authorize_param(self, the_param, user):
+        ''' return param if user is superuser, raise otherwise '''
+        if user.is_superuser:
+            return the_param
+        raise Unauthorized("Only admin user may do this")
+
+    def read_list(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(object_list, bundle.request.user)
+
+    def read_detail(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(bundle.obj, bundle.request.user)
+
+    def create_list(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(object_list, bundle.request.user)
+
+    def create_detail(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(bundle.obj, bundle.request.user)
+
+    def update_list(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(object_list, bundle.request.user)
+
+    def update_detail(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(bundle.obj, bundle.request.user)
+
+    def delete_list(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(object_list, bundle.request.user)
+
+    def delete_detail(self, object_list, bundle):
+        ''' allowed if admin '''
+        return self.authorize_param(bundle.obj, bundle.request.user)
+
+
 class UserObjectsAuthorization(Authorization):
     ''' Tastypie auth for the django User endpoint '''
 

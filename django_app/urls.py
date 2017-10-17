@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django_app.views import (IndexView, login_async, logout_async,
                               RegisterUserView, ChangePasswordView, RequestResetPassword,
                               ResetPassword)
-from django_app.api import (MeetingResource, MeetingTypeResource, UserResource,
-                            SaveMeetingResource, MeetingNotThereResource)
+from django_app.api.api import (MeetingResource, MeetingTypeResource, UserResource,
+                                SaveMeetingResource, MeetingNotThereResource)
 
 
 API_V1 = Api(api_name='v1')

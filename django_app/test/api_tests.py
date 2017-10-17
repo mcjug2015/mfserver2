@@ -7,8 +7,9 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.http.request import QueryDict
 from tastypie.exceptions import NotFound
-from django_app.api import ExceptionThrowingModelResource, SaveMeetingResource,\
-    MeetingResource, MeetingValidation, MeetingNotThereResource, ModelResource
+from django_app.api.api import (ExceptionThrowingModelResource, SaveMeetingResource,
+                                MeetingResource, MeetingValidation,
+                                MeetingNotThereResource, ModelResource)
 from django_app.models import Meeting, MeetingNotThere
 from mockito.mocking import mock
 from mockito.mockito import when, unstub

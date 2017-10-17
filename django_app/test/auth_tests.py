@@ -4,9 +4,49 @@ from django.contrib.auth.models import User
 from mockito.mockito import unstub
 from mockito.mocking import mock
 from tastypie.exceptions import Unauthorized
-from django_app.auth import UserObjectsAuthorization,\
-    OwnerObjectsOnlyAuthorization
+from django_app.api.auth import UserObjectsAuthorization,\
+    OwnerObjectsOnlyAuthorization, AdminAuthorization
 from django_app.models import Meeting
+
+
+class AdminAuthorizationTests(TestCase):
+    ''' tests for AdminAuthorization '''
+
+    def setUp(self):
+        ''' set up the test '''
+        self.the_auth = AdminAuthorization()
+        self.the_bundle = mock()
+        self.the_bundle.obj = "testing123"
+        self.the_bundle.request = mock()
+        self.the_bundle.request.user = mock()
+
+    def tearDown(self):
+        ''' tear down the test '''
+        unstub()
+
+    def test_authorized(self):
+        ''' admin is authorized to do everything '''
+        self.the_bundle.request.user.is_superuser = True
+        self.assertEqual("testing123", self.the_auth.read_detail(None, self.the_bundle))
+        self.assertEqual("testing123", self.the_auth.update_detail(None, self.the_bundle))
+        self.assertEqual("testing123", self.the_auth.create_detail(None, self.the_bundle))
+        self.assertEqual("testing123", self.the_auth.delete_detail(None, self.the_bundle))
+        self.assertEqual("val", self.the_auth.read_list("val", self.the_bundle))
+        self.assertEqual("val", self.the_auth.update_list("val", self.the_bundle))
+        self.assertEqual("val", self.the_auth.create_list("val", self.the_bundle))
+        self.assertEqual("val", self.the_auth.delete_list("val", self.the_bundle))
+
+    def test_unauthorized(self):
+        ''' non-admin users should always trigger unauthorized '''
+        self.the_bundle.request.user.is_superuser = False
+        self.assertRaises(Unauthorized, self.the_auth.read_detail, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.read_list, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.update_detail, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.update_list, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.create_detail, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.create_list, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.delete_detail, None, self.the_bundle)
+        self.assertRaises(Unauthorized, self.the_auth.delete_list, None, self.the_bundle)
 
 
 class UserObjectsAuthorizationTests(TestCase):

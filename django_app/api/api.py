@@ -16,7 +16,7 @@ from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.contrib.auth.models import User
 from django.contrib.gis.geos.factory import fromstr
 from django_app.models import MeetingType, Meeting, MeetingNotThere
-from django_app.auth import UserObjectsAuthorization
+from django_app.api.auth import UserObjectsAuthorization
 from django_app.forms import MeetingForm
 LOGGER = logging.getLogger(__name__)
 

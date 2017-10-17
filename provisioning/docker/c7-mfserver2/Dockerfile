@@ -4,10 +4,6 @@ ENV container docker
 RUN yum -y install sudo; yum clean all;
 RUN yum -y update systemd;
 RUN yum -y update systemd-sysv;
-RUN yum install -y epel-release;
-RUN yum install -y python2-pip;
-RUN /usr/bin/pip install pip==7.1.0;
-RUN yum install -y salt-minion;
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
