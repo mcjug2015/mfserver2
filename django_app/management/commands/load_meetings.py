@@ -18,7 +18,7 @@ class Command(BaseCommand):
         parser.add_argument('--meeting_file', default="/home/dtuser/Desktop/latest_meetings.txt")
         parser.add_argument('--username', default='mf_admin')
         parser.add_argument('--password', default='mf_admin')
-        parser.add_argument('--base_url', default='http://127.0.0.1:8000/')
+        parser.add_argument('--base_url', default='http://127.0.0.1:8000')
         parser.add_argument('--error_file', default=os.path.join(os.path.dirname(__file__),
                                                                  '..', '..', '..', 'loader_error.txt'))
         parser.add_argument('--error_detail_file', default=os.path.join(os.path.dirname(__file__),
@@ -31,11 +31,8 @@ class Command(BaseCommand):
         meeting_file_path = options['meeting_file']
         error_file_path = options['error_file']
         error_detail_file_path = options['error_detail_file']
-        initial_url = "%s%s" % (base_url, "mfserver2/welcome/")
-        login_url = "%s%s" % (base_url, "mfserver2/login_async/")
         post_meeting_url = "%s%s" % (base_url, "mfserver2/api/v1/savemeeting/")
-        helper = RefererTokenSessionHelper(username, password,
-                                           initial_url, login_url)
+        helper = RefererTokenSessionHelper(username, password, base_url)
         the_referer = helper.get_referer()
         the_token, session_id = helper.get_token_session()
         meeting_file_handle = open(meeting_file_path)

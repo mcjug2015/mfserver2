@@ -1,7 +1,7 @@
 # login stuff
 Read this document for how to manually make authenticated requests. There is also a helper command in django_app.management.commands.get_csrf_session.py that will take in your username and password and supply csrf token and session id. E.G. 
 ```
-python manage.py get_csrf_session --initial_url https://127.0.0.1/mfserver2/welcome/ --login_url https://127.0.0.1/mfserver2/login_async/
+python manage.py get_csrf_session --base_url https://127.0.0.1
 ```
 
 

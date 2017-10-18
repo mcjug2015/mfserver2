@@ -7,11 +7,12 @@ from bs4 import BeautifulSoup
 class RefererTokenSessionHelper(object):
     ''' gets csrf and session id from mfserver2 instances '''
 
-    def __init__(self, username, password, initial_url, login_url):
+    def __init__(self, username, password, base_url):
         self.username = username
         self.password = password
-        self.initial_url = initial_url
-        self.login_url = login_url
+        self.base_url = base_url
+        self.initial_url = "%s/%s" % (self.base_url, "mfserver2/welcome/")
+        self.login_url = "%s/%s" % (self.base_url, "mfserver2/login_async/")
 
     def get_referer(self):
         ''' get the referer based on initial url '''

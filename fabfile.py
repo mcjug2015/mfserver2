@@ -2,7 +2,6 @@ import os
 import sys
 from fabric.api import env, local
 from fabric.context_managers import warn_only, lcd, shell_env
-from datetime import datetime
 import time
 from fabric.utils import abort
 

@@ -9,16 +9,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--username', default='mf_admin')
         parser.add_argument('--password', default='mf_admin')
-        parser.add_argument('--initial_url', default='http://127.0.0.1:8000/mfserver2/welcome/')
-        parser.add_argument('--login_url', default='http://127.0.0.1:8000/mfserver2/login_async/')
+        parser.add_argument('--base_url', default='http://127.0.0.1:8000')
 
     def handle(self, *args, **options):
-        username = options['username']
-        password = options['password']
-        initial_url = options['initial_url']
-        login_url = options['login_url']
-        helper = RefererTokenSessionHelper(username, password,
-                                           initial_url, login_url)
+        helper = RefererTokenSessionHelper(options['username'], options['password'],
+                                           options['base_url'])
         the_referer = helper.get_referer()
         the_token1, session_id = helper.get_token_session()
         retval = 'curl -f -k -v --cookie "csrftoken=%s;sessionid=%s"' % (the_token1,

@@ -24,8 +24,7 @@ class CommandTests(TestCase):
         when(get_csrf_session.RefererTokenSessionHelper).get_token_session().thenReturn(("test2", "test3"))
         retval = self.command.handle(username='a',
                                      password='b',
-                                     initial_url='https://example.com:8000',
-                                     login_url='d')
+                                     base_url='https://example.com:8000')
         expected = 'curl -f -k -v --cookie "csrftoken=test2;sessionid=test3"'
         expected += ' -H "X-CSRFToken: test2" -H "referer: test1"'
         self.assertEqual(expected, retval)
@@ -35,4 +34,4 @@ class CommandTests(TestCase):
         the_parser = mock()
         when(the_parser).add_argument(any(), default=any()).thenReturn(None)
         self.command.add_arguments(the_parser)
-        verify(the_parser, times=4).add_argument(any(), default=any())
+        verify(the_parser, times=3).add_argument(any(), default=any())
