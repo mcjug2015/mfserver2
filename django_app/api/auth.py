@@ -19,7 +19,7 @@ class AdminAuthorization(Authorization):
 
     def read_detail(self, object_list, bundle):
         ''' allowed if admin '''
-        return self.authorize_param(bundle.obj, bundle.request.user)
+        return self.authorize_param(True, bundle.request.user)
 
     def create_list(self, object_list, bundle):
         ''' allowed if admin '''
@@ -27,7 +27,7 @@ class AdminAuthorization(Authorization):
 
     def create_detail(self, object_list, bundle):
         ''' allowed if admin '''
-        return self.authorize_param(bundle.obj, bundle.request.user)
+        return self.authorize_param(True, bundle.request.user)
 
     def update_list(self, object_list, bundle):
         ''' allowed if admin '''
@@ -35,7 +35,7 @@ class AdminAuthorization(Authorization):
 
     def update_detail(self, object_list, bundle):
         ''' allowed if admin '''
-        return self.authorize_param(bundle.obj, bundle.request.user)
+        return self.authorize_param(True, bundle.request.user)
 
     def delete_list(self, object_list, bundle):
         ''' allowed if admin '''
@@ -43,7 +43,7 @@ class AdminAuthorization(Authorization):
 
     def delete_detail(self, object_list, bundle):
         ''' allowed if admin '''
-        return self.authorize_param(bundle.obj, bundle.request.user)
+        return self.authorize_param(True, bundle.request.user)
 
 
 class UserObjectsAuthorization(Authorization):

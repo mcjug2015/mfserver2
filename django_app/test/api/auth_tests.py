@@ -27,10 +27,10 @@ class AdminAuthorizationTests(TestCase):
     def test_authorized(self):
         ''' admin is authorized to do everything '''
         self.the_bundle.request.user.is_superuser = True
-        self.assertEqual("testing123", self.the_auth.read_detail(None, self.the_bundle))
-        self.assertEqual("testing123", self.the_auth.update_detail(None, self.the_bundle))
-        self.assertEqual("testing123", self.the_auth.create_detail(None, self.the_bundle))
-        self.assertEqual("testing123", self.the_auth.delete_detail(None, self.the_bundle))
+        self.assertEqual(True, self.the_auth.read_detail(None, self.the_bundle))
+        self.assertEqual(True, self.the_auth.update_detail(None, self.the_bundle))
+        self.assertEqual(True, self.the_auth.create_detail(None, self.the_bundle))
+        self.assertEqual(True, self.the_auth.delete_detail(None, self.the_bundle))
         self.assertEqual("val", self.the_auth.read_list("val", self.the_bundle))
         self.assertEqual("val", self.the_auth.update_list("val", self.the_bundle))
         self.assertEqual("val", self.the_auth.create_list("val", self.the_bundle))
