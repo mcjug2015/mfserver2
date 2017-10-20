@@ -177,6 +177,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'django_app.*': {
+            'handlers': ['mfserver2_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     },
 }
 

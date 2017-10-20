@@ -154,6 +154,7 @@ class SaveMeetingResource(ExceptionThrowingModelResource):
         authorization = Authorization()
         validation = MeetingValidation()
         max_limit = 50
+        always_return_data = True
 
 
 class MeetingNotThereResource(ExceptionThrowingModelResource):

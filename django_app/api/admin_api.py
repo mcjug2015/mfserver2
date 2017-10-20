@@ -15,6 +15,7 @@ class AdminUserResource(ExceptionThrowingModelResource):
         bundle = super(AdminUserResource, self).obj_create(bundle, **kwargs)
         bundle.obj.set_password(bundle.data.get('password'))
         bundle.obj.save()
+        return bundle
 
     class Meta(object):
         ''' meta info '''
@@ -26,3 +27,4 @@ class AdminUserResource(ExceptionThrowingModelResource):
         authentication = SessionAuthentication()
         authorization = AdminAuthorization()
         filtering = {'username': ALL}
+        always_return_data = True
