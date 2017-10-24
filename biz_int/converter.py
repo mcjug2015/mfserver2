@@ -13,7 +13,7 @@ def meeting_guide_convert(json_obj):
     meeting.day_of_week = int(json_obj["day"]) + 1
     meeting.description = json_obj["location"]
     meeting.address = json_obj["formatted_address"]
-    meeting.geo_location = GEOSGeometry("POINT(%s %s)" % (json_obj["latitude"], json_obj["longitude"]),
+    meeting.geo_location = GEOSGeometry("POINT(%s %s)" % (json_obj["longitude"], json_obj["latitude"]),
                                         srid=4326)
     return meeting
 
