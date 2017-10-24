@@ -27,12 +27,14 @@ def pep8():
     _ensure_virtualenv()
     local('pep8 --config=conf_dev/pep8/pep8_config.txt django_app')
     local('pep8 --config=conf_dev/pep8/pep8_config.txt django_proj')
+    local('pep8 --config=conf_dev/pep8/pep8_config.txt biz_int')
 
 
 def pylint():
     _ensure_virtualenv()
     local('pylint --rcfile=conf_dev/pylint/pylintrc.txt django_app')
     local('pylint --rcfile=conf_dev/pylint/pylintrc.txt django_proj')
+    local('pylint --rcfile=conf_dev/pylint/pylintrc.txt biz_int')
 
 
 def run_tests():

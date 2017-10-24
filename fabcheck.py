@@ -6,7 +6,7 @@ from django_app.services.request_service import create_user, create_meeting,\
 from django_app.services.auth_service import RefererTokenSessionHelper
 
 
-env.base_url = "https://127.0.0.1"
+env.base_url = "https://159.203.77.9"
 env.admin_username = "mf_admin"
 env.admin_password = "mf_admin"
 env.temp_user_obj = {"username": "temp_user_deleteme",
