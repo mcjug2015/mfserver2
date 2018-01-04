@@ -1,4 +1,4 @@
-[pep8]
+[pycodestyle]
 ignore =
 exclude = django_app/migrations
 max-line-length = 120

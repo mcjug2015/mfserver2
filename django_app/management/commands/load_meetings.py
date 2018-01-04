@@ -59,7 +59,7 @@ class Command(BaseCommand):
                         meetings_succeeded += 1
                     else:
                         raise  # pylint: disable=misplaced-bare-raise
-                except:  # pylint: disable=bare-except
+                except:  # noqa pylint: disable=bare-except
                     error_handle.write(stripped_line + '\n')
                     error_detail_handle.write('%s\n%s\n%s\n\n' % (stripped_line,
                                                                   response.status_code if response is not None else "",

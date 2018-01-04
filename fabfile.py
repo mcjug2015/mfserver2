@@ -25,9 +25,9 @@ def install_dev_deps():
 
 def pep8():
     _ensure_virtualenv()
-    local('pep8 --config=conf_dev/pep8/pep8_config.txt django_app')
-    local('pep8 --config=conf_dev/pep8/pep8_config.txt django_proj')
-    local('pep8 --config=conf_dev/pep8/pep8_config.txt biz_int')
+    local('pycodestyle --config=conf_dev/pep8/pep8_config.txt django_app')
+    local('pycodestyle --config=conf_dev/pep8/pep8_config.txt django_proj')
+    local('pycodestyle --config=conf_dev/pep8/pep8_config.txt biz_int')
 
 
 def pylint():

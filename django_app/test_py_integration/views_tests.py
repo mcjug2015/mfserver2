@@ -5,9 +5,9 @@ from django.test.testcases import TestCase
 from django.contrib.auth.models import User
 from mockito.mockito import unstub, when, verify
 from mockito.matchers import any  # pylint: disable=redefined-builtin
+from bs4 import BeautifulSoup
 from django_app.models import UserConfirmation
 from django_app import views
-from bs4 import BeautifulSoup
 
 
 class TestUserCreation(TestCase):

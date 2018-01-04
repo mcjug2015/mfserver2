@@ -25,10 +25,10 @@ class UserConfirmation(models.Model):
 
 class CigarShop(models.Model):
     ''' Model class for a cigar shop, has owner and location '''
-    objects = models.GeoManager()
+    objects = models.Manager()
     name = models.CharField(max_length=250, null=False, blank=False)
     location = models.PointField()
-    owner = models.ForeignKey(User, related_name='cigar_shops', null=False, blank=False)
+    owner = models.ForeignKey(User, related_name='cigar_shops', null=False, blank=False, on_delete=models.CASCADE)
 
 
 class MeetingType(models.Model):
@@ -55,7 +55,7 @@ class Meeting(models.Model):
                            (6, "Friday"),
                            (7, "Saturday")]
 
-    objects = models.GeoManager()
+    objects = models.Manager()
     day_of_week = models.IntegerField(null=False, blank=False, choices=DAY_OF_WEEK_CHOICES)
     start_time = models.TimeField(null=False, blank=False)
     end_time = models.TimeField(null=False, blank=False)

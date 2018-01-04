@@ -1,10 +1,10 @@
 ''' unit tests for request service '''
 # pylint: disable=redefined-builtin,no-self-use
 from django.test.testcases import TestCase
-from django_app.services import request_service
 from mockito.mockito import when, verify, unstub
 from mockito.matchers import any
 from mockito.mocking import mock
+from django_app.services import request_service
 
 
 class RequestTests(TestCase):

@@ -24,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 class ExceptionThrowingModelResource(ModelResource):
     ''' resource that does not eat exceptions '''
 
-    def _handle_500(self, request, exception):
+    def _handle_500(self, request, exception):  # pylint: disable=inconsistent-return-statements
         ''' stop swollowing legitimate exceptions '''
         not_found_exceptions = (NotFound, ObjectDoesNotExist, Http404)
         if isinstance(exception, not_found_exceptions):

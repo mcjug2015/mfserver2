@@ -3,10 +3,10 @@ from tempfile import mkdtemp
 import shutil
 import os
 from django.test.testcases import TestCase
-from django_app.management.commands import load_meetings
 from mockito.mockito import unstub, verify, when
 from mockito.matchers import any  # pylint: disable=redefined-builtin
 from mockito.mocking import mock
+from django_app.management.commands import load_meetings
 
 
 class LoadMeetingsTests(TestCase):

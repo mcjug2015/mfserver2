@@ -1,4 +1,4 @@
-pep8
+pycodestyle
 backports.functools-lru-cache
 configparser
 pylint

@@ -1,11 +1,11 @@
 ''' tests for the admin module '''
 # pylint: disable=protected-access, no-member
 from django.test.testcases import TestCase
+from mockito.mockito import when
+from mockito import mock
 from django_app.admin import MeetingNotThereAdmin
 from django_app.models import MeetingNotThere
 from django_app import admin
-from mockito.mockito import when
-from mockito import mock
 
 
 class LatLongWidgetTests(TestCase):

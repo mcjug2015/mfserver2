@@ -1,10 +1,10 @@
 ''' module for get_csrf_session command tests '''
 # pylint: disable=redefined-builtin
 from django.test.testcases import TestCase
-from django_app.management.commands import get_csrf_session
 from mockito.mocking import mock
 from mockito.mockito import when, verify, unstub
 from mockito.matchers import any
+from django_app.management.commands import get_csrf_session
 
 
 class CommandTests(TestCase):
