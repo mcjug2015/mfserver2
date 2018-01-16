@@ -4,6 +4,7 @@ from fabric.api import env, local
 from fabric.context_managers import warn_only, lcd, shell_env
 import time
 from fabric.utils import abort
+from time import sleep
 
 
 def _ensure_virtualenv():
@@ -85,6 +86,7 @@ def sudo_docker_provision():
     local("""sudo docker exec %s mkdir -p /tmp/mfserver2""" % container_id)
     local("""sudo docker exec %s tar -xzf /root/mfserver2.tar.gz -C /tmp/mfserver2""" % container_id)
     local("""sudo docker exec -t %s sh /tmp/mfserver2/provisioning/misc/do_salt.sh""" % container_id)
+    sleep(3)
     local("""curl -f -k https://127.0.0.1/mfserver2/welcome/""")
     # sudo_docker_stop_remove()
     pass
