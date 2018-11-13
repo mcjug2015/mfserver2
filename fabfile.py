@@ -5,6 +5,7 @@ from fabric.context_managers import warn_only, lcd, shell_env
 import time
 from fabric.utils import abort
 from time import sleep
+from deleteme.scratchpad import do_something
 
 
 def _ensure_virtualenv():
@@ -206,3 +207,13 @@ def restore_local_db(schema_dump_path="mfserver2_backup_schema.dump",
         local('''psql -h127.0.0.1 -Umfserver2 mfserver2 -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;"''')
         local("""psql -h127.0.0.1 -Umfserver2 -dmfserver2 mfserver2 < %s""" % schema_dump_path)
         local("""psql -h127.0.0.1 -Umfserver2 -dmfserver2 mfserver2 < %s""" % data_dump_path)
+
+
+def scratchpad():
+    do_something()
+
+
+if __name__ == '__main__':
+    from fabric.main import main
+    sys.argv = ['fab', '-f', __file__,] + sys.argv[1:]
+    main()
